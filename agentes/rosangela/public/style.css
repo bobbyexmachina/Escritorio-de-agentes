@@ -124,3 +124,6 @@ td input{width:100%}
   .linha,#f-orc.linha{grid-template-columns:1fr 1fr}
   .mes{margin-left:0}
 }
+
+/* o atributo hidden sempre vence o display das classes */
+[hidden]{display:none!important}

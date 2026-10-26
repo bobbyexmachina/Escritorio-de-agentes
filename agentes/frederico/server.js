@@ -6,6 +6,11 @@
    Os leads ficam em data/crm.json, nesta pasta, e não saem da máquina.
    Nenhuma rota envia mensagem, e-mail ou WhatsApp: tudo é texto para copiar.
 
+   Integrações (só leitura e pesquisa, veja integracoes/):
+   - HubSpot: pela estação HubSpot do escritório ou por Service Key;
+   - Apollo.io: People API Search com a chave de API.
+   As credenciais ficam só na memória deste processo.
+
    O escritório sobe este arquivo com PORT=4411 (veja data/sistemas.json
    do escritório). Sozinho: node server.js  ->  http://localhost:4411
    =========================================================== */
@@ -15,6 +20,12 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const R = require('./regras');
+const { criarHubSpot, RECURSOS, ETAPA_HUBSPOT, ErroIntegracao } = require('./integracoes/hubspot');
+const { criarApollo } = require('./integracoes/apollo');
+const HS = criarHubSpot();
+const AP = criarApollo();
+/* o que a última listagem do HubSpot devolveu: importar usa isto, não o que o navegador mandar */
+let vistosHS = new Map();
 
 const PORT = Number(process.env.PORT) || 4411;
 const PASTA = __dirname;
@@ -62,6 +73,48 @@ function limpaLead(b, antigo, etapas) {
   if (!Array.isArray(l.historico)) l.historico = [];
   if (!l.nome) l.nome = 'Sem nome';
   return l;
+}
+
+/* ---------------- leads vindos das integrações ---------------- */
+function leadImportado(campos, externo, etapas, etapa) {
+  const l = limpaLead(Object.assign({ proximoPasso: 'Revisar a origem e definir o próximo passo', dataProximoPasso: hoje(),
+                                      motivoContato: 'Lead importado: validar fit antes de qualquer contato' }, campos), null, etapas);
+  if (etapa && etapas.includes(etapa)) l.etapa = etapa;
+  if (R.FECHADAS.includes(l.etapa)) {
+    // negócio que já fechou no HubSpot não ganha follow-up
+    l.proximoPasso = ''; l.dataProximoPasso = ''; l.motivoContato = '';
+    l.dataFechamento = campos.dataFechamento || hoje();
+  }
+  l.externo = externo;
+  l.historico.push({ data: hoje(), para: l.etapa });
+  return l;
+}
+function leadDoHubSpot(x, etapas) {
+  const p = x.props || {}, ref = { hubspot: { recurso: x.recurso, id: x.id, url: x.url || null } };
+  const fonte = `Importado do HubSpot (${RECURSOS[x.recurso].nome.toLowerCase()} ${x.id}).`;
+  if (x.recurso === 'contacts') {
+    const pessoa = [p.firstname, p.lastname].filter(Boolean).join(' ');
+    return leadImportado({ nome: p.company || pessoa || 'Contato HubSpot ' + x.id, origem: 'HubSpot',
+      contato: [pessoa + (p.jobtitle ? ` (${p.jobtitle})` : ''), p.email].filter(Boolean).join(' · '), observacoes: fonte }, ref, etapas);
+  }
+  if (x.recurso === 'companies')
+    return leadImportado({ nome: p.name || p.domain || 'Empresa HubSpot ' + x.id, origem: 'HubSpot',
+      observacoes: [fonte, p.domain && `Domínio: ${p.domain}.`, p.industry && `Setor: ${p.industry}.`, p.city && `Cidade: ${p.city}.`].filter(Boolean).join(' ') }, ref, etapas);
+  // negócio: valor e etapa vêm do HubSpot; etapa fora do pipeline padrão entra como a primeira
+  return leadImportado({ nome: p.dealname || 'Negócio HubSpot ' + x.id, origem: 'HubSpot',
+    valorPotencial: p.amount === '' || p.amount === null || p.amount === undefined ? '' : Number(p.amount),
+    dataFechamento: p.closedate ? String(p.closedate).slice(0, 10) : '',
+    observacoes: [fonte, p.dealstage && `Etapa no HubSpot: ${p.dealstage}.`, p.closedate && `Fechamento no HubSpot: ${String(p.closedate).slice(0, 10)}.`].filter(Boolean).join(' ') },
+    ref, etapas, ETAPA_HUBSPOT[p.dealstage]);
+}
+function leadDoApollo(x, etapas) {
+  return leadImportado({ nome: x.empresa || x.nome, origem: 'Apollo.io',
+    contato: x.nome + (x.cargo ? ` (${x.cargo})` : ''),
+    proximoPasso: 'Validar fit e definir um canal de contato autorizado',
+    observacoes: ['Pesquisa no Apollo.io.', x.cargo && `Cargo: ${x.cargo}.`, x.local && `Local: ${x.local}.`, x.dominio && `Domínio: ${x.dominio}.`,
+      x.temEmail ? 'O Apollo indica e-mail disponível, mas ele não foi obtido (exigiria enriquecimento com crédito).' : '',
+      'Nome pode estar parcial. Nenhum contato foi feito.'].filter(Boolean).join(' ') },
+    { apollo: { id: x.apolloId } }, etapas);
 }
 
 /* ---------------- CSV no formato do CRM padrão ---------------- */
@@ -166,6 +219,42 @@ http.createServer(async (req, res) => {
       if (!l) return json(res, 404, { ok: false, motivo: 'lead não encontrado' });
       return json(res, 200, R.proposta(l, d.empresa, await corpo(req)));
     }
+    /* ---------- integrações ---------- */
+    if (rota === '/api/integracoes') return json(res, 200, { hubspot: await HS.status(), apollo: AP.status() });
+    if (rota === '/api/hubspot/conectar' && met === 'POST') return json(res, 200, await HS.conectar(await corpo(req)));
+    if (rota === '/api/hubspot/desconectar' && met === 'POST') return json(res, 200, HS.desconectar());
+    if (rota === '/api/hubspot/registros') {
+      const r = await HS.listar(u.searchParams.get('recurso'), u.searchParams.get('depois'));
+      const ja = new Set(d.leads.filter(l => l.externo && l.externo.hubspot).map(l => l.externo.hubspot.recurso + ':' + l.externo.hubspot.id));
+      vistosHS = new Map(r.linhas.map(x => [r.recurso + ':' + x.id, Object.assign({ recurso: r.recurso, vale: Date.now() + 30 * 60e3 }, x)]));
+      for (const x of r.linhas) x.noCRM = ja.has(r.recurso + ':' + x.id);
+      return json(res, 200, r);
+    }
+    if (rota === '/api/hubspot/importar' && met === 'POST') {
+      const b = await corpo(req);
+      const x = vistosHS.get(b.recurso + ':' + b.id);
+      if (!x || x.vale < Date.now()) return json(res, 409, { ok: false, motivo: 'esse registro expirou: liste de novo antes de importar' });
+      if (d.leads.some(l => l.externo && l.externo.hubspot && l.externo.hubspot.recurso === x.recurso && l.externo.hubspot.id === x.id))
+        return json(res, 409, { ok: false, motivo: 'esse registro do HubSpot já está no CRM' });
+      const l = leadDoHubSpot(x, etapas);
+      d.leads.push(l); gravar(d); return json(res, 200, { ok: true, lead: l });
+    }
+    if (rota === '/api/apollo/conectar' && met === 'POST') return json(res, 200, await AP.conectar((await corpo(req)).chave));
+    if (rota === '/api/apollo/desconectar' && met === 'POST') return json(res, 200, AP.desconectar());
+    if (rota === '/api/apollo/pesquisa' && met === 'POST') {
+      const r = await AP.pesquisar(await corpo(req));
+      const ja = new Set(d.leads.filter(l => l.externo && l.externo.apollo).map(l => l.externo.apollo.id));
+      for (const x of r.linhas) x.noCRM = !!x.apolloId && ja.has(x.apolloId);
+      return json(res, 200, r);
+    }
+    if (rota === '/api/apollo/importar' && met === 'POST') {
+      const x = AP.resultado((await corpo(req)).id);
+      if (x.apolloId && d.leads.some(l => l.externo && l.externo.apollo && l.externo.apollo.id === x.apolloId))
+        return json(res, 409, { ok: false, motivo: 'essa pessoa do Apollo já está no CRM' });
+      const l = leadDoApollo(x, etapas);
+      d.leads.push(l); gravar(d); return json(res, 200, { ok: true, lead: l });
+    }
+
     if (rota === '/api/importar' && met === 'POST') {
       // importar em massa pede duas chamadas: a primeira só mostra o que vai entrar
       const b = await corpo(req);
@@ -194,6 +283,6 @@ http.createServer(async (req, res) => {
       res.end(buf);
     });
   } catch (e) {
-    json(res, 400, { ok: false, motivo: e.message });
+    json(res, e instanceof ErroIntegracao ? e.status : 400, { ok: false, motivo: e.message });
   }
 }).listen(PORT, '127.0.0.1', () => console.log(`Frederico (Comercial & CRM) -> http://localhost:${PORT}`));

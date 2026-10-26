@@ -23,6 +23,24 @@ node relatorio.js --json        # a análise completa
 
 As regras ficam em `regras.js`. Use o que ele devolve em vez de recalcular de cabeça.
 
+## HubSpot e Apollo.io
+
+O painel do Frederico está conectado (ou pode ser conectado) ao HubSpot e ao Apollo.io. Use **sempre as rotas locais do painel**; elas usam a conexão que já está na memória do processo:
+
+```bash
+curl -s http://localhost:4411/api/integracoes                                   # quem está conectado
+curl -s "http://localhost:4411/api/hubspot/registros?recurso=contacts"          # contacts | companies | deals (até 20 por página)
+curl -s "http://localhost:4411/api/hubspot/registros?recurso=deals&depois=CURSOR"
+curl -s -X POST http://localhost:4411/api/apollo/pesquisa -H 'Content-Type: application/json' \
+     -d '{"cargos":"diretor de marketing","locais":"Belo Horizonte"}'           # até 10 pessoas
+```
+
+- **HubSpot:** só leitura de contatos, empresas e negócios, pela estação HubSpot do escritório (porta 4402) ou por Service Key digitada no painel. Nada é criado, alterado ou excluído no HubSpot. Cada página é uma amostra: diga isso e não trate como o total da conta.
+- **Apollo.io:** só a People API Search. Não traz e-mail nem telefone, não enriquece, não cria sequência e não dispara nada. Nome pode vir parcial.
+- **Credenciais:** nunca peça chave ou token no chat, nunca leia, grave ou mostre credencial. Quem conecta é o usuário, no painel (aba Integrações). Só diga que uma integração está conectada quando `/api/integracoes` disser `"conectado": true`.
+- **Importar para o CRM** (`POST /api/hubspot/importar` e `/api/apollo/importar`) cria lead novo. Em lote, peça confirmação antes. Não importe duplicado: o painel recusa o que já está no CRM.
+- Nunca diga que contatou alguém. Pesquisar e importar não é contatar.
+
 ## Onboarding
 
 Na primeira interação, descubra **só o que falta**: produto/serviço, ticket médio, público ideal, origem dos leads, ciclo de venda, canal principal, volume aproximado de leads, etapas atuais do funil, objeções frequentes e meta comercial. Se já houver dados em `empresa`, use-os e não pergunte de novo.

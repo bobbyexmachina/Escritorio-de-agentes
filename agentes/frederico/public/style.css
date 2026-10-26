@@ -188,3 +188,22 @@ tr.clic{cursor:pointer}tr.clic:hover td{background:rgba(118,40,241,.07)}
 .modal-card input{width:100%;margin-bottom:8px}
 
 @media (max-width:900px){ .cols,.grade3{grid-template-columns:1fr} .formlead fieldset{grid-template-columns:1fr 1fr} }
+
+/* integrações */
+.integ .estado{font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);border:1px solid var(--line);padding:2px 8px;border-radius:2px}
+.integ .estado.ok{color:var(--ok);border-color:rgba(35,224,138,.4)}
+.conecta{display:grid;grid-template-columns:2fr 1fr auto;gap:8px;align-items:end;margin:10px 0}
+.conecta label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--dim)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:3px;overflow:hidden}
+.seg button{background:var(--panel-2);border:0;padding:7px 11px;cursor:pointer;color:var(--dim);font-weight:600;font-size:13px}
+.seg button.on{background:var(--roxo);color:var(--txt)}
+.btn.ghost{background:none}
+.btn.mini2{padding:3px 9px;font-size:12px}
+.faixas{display:flex;flex-wrap:wrap;gap:6px}
+.chk{display:inline-flex!important;flex-direction:row!important;align-items:center;gap:4px;background:var(--panel-2);border:1px solid var(--line);padding:3px 7px;border-radius:2px;color:var(--txt)!important}
+.lk{color:var(--ambar);font-size:12px;text-decoration:none}
+#g-titulo .lk{font-size:13px;margin-left:8px;font-weight:500}
+@media (max-width:900px){ .conecta{grid-template-columns:1fr} }
+
+/* o atributo hidden sempre vence o display das classes */
+[hidden]{display:none!important}

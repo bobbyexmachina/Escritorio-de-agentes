@@ -31,7 +31,7 @@ const CAMPOS_EMP = [
 ];
 const OBRIGATORIOS = ['produto', 'ticketMedio', 'publicoIdeal', 'origemLeads', 'cicloVenda', 'canalPrincipal', 'volumeLeads', 'etapasFunil', 'objecoes', 'metaComercial'];
 
-let dados = null, an = null, meta = null, aberto = null;
+let dados = null, an = null, meta = null, aberto = null, nomeAberto = '';
 
 const api = async (url, opt) => {
   const r = await fetch(url, opt && opt.body ? Object.assign({ headers: { 'Content-Type': 'application/json' } }, opt, { body: JSON.stringify(opt.body) }) : opt);
@@ -200,7 +200,10 @@ const NOTAS = [['', 'não avaliado'], ['0', 'não'], ['1', 'em parte'], ['2', 's
 async function abrirLead(id) {
   aberto = id;
   const { lead, analise: a } = await api('api/leads/' + id);
-  $('#g-titulo').textContent = lead.nome;
+  nomeAberto = lead.nome;
+  $('#g-titulo').innerHTML = esc(lead.nome) + (lead.externo && lead.externo.hubspot && lead.externo.hubspot.url
+    ? ` <a class="lk" href="${esc(lead.externo.hubspot.url)}" target="_blank" rel="noopener">ver no HubSpot ↗</a>` : '') +
+    (lead.externo && lead.externo.apollo ? ' <span class="tag">Apollo.io</span>' : '');
   $('#g-etapas').innerHTML = an.etapas.map(e => `<button class="etp ${e === lead.etapa ? 'on' : ''} ${e === 'Ganho' ? 'ganho' : e === 'Perdido' ? 'perdido' : ''}" data-etapa="${esc(e)}">${esc(e)}</button>`).join('');
   const q = lead.qualificacao || {};
   $('#f-lead').innerHTML = CAMPOS_LEAD.map(([k, rot, t]) => `<label class="${t === 'area' ? 'largo' : ''}"><span>${esc(rot)}</span>${t === 'area'
@@ -231,6 +234,7 @@ document.addEventListener('click', async e => {
   if (alvo) { abrirLead(alvo.dataset.lead); return; }
   const b = e.target.closest('button'); if (!b) return;
   if (b.dataset.ir) abrirAba(b.dataset.ir);
+  if (b.dataset.ir === 'integracoes' || b.dataset.aba === 'integracoes') integracoes();
   if (b.dataset.copiar) {
     try { await navigator.clipboard.writeText($('#' + b.dataset.copiar).textContent); toast('Copiado.'); }
     catch (er) { toast('O navegador não deixou copiar: selecione o texto.'); }
@@ -264,7 +268,7 @@ $('#f-lead').addEventListener('click', async e => {
   }
   if (e.target.id === 'excluir-lead') {
     e.preventDefault();
-    if (!await confirmar(`Excluir "${$('#g-titulo').textContent}" do CRM? Isso não dá para desfazer.`)) return;
+    if (!await confirmar(`Excluir "${nomeAberto}" do CRM? Isso não dá para desfazer.`)) return;
     await api(`api/leads/${aberto}?confirmar=sim`, { method: 'DELETE' });
     $('#gaveta').hidden = true; aberto = null; toast('Lead excluído.'); carregar();
   }
@@ -301,11 +305,126 @@ $('#csv').addEventListener('change', async e => {
   carregar();
 });
 
+/* ===========================================================
+   INTEGRAÇÕES — HubSpot e Apollo.io (só leitura e pesquisa)
+   =========================================================== */
+let recHS = 'contacts';
+const NOMES_REC = { contacts: 'Contatos', companies: 'Empresas', deals: 'Negócios' };
+
+async function integracoes() {
+  let st;
+  try { st = await api('api/integracoes'); } catch (e) { $('#hs-estado').textContent = $('#ap-estado').textContent = 'erro'; return; }
+  const hs = st.hubspot, ap = st.apollo;
+  $('#hs-estado').textContent = hs.conectado ? 'conectado' : 'desconectado';
+  $('#hs-estado').className = 'estado ' + (hs.conectado ? 'ok' : '');
+  $('#hs-modo').innerHTML = hs.conectado
+    ? (hs.modo === 'estacao'
+        ? `Usando a <b>estação HubSpot do escritório</b> (já autenticada${hs.conta && hs.conta.portalId ? `, conta ${esc(hs.conta.portalId)}` : ''}). O Frederico não vê a credencial.`
+        : `Conexão direta por Service Key${hs.conta && hs.conta.portalId ? `, conta ${esc(hs.conta.portalId)}` : ''}. A chave fica só na memória do Frederico.`)
+    : 'Ligue a estação HubSpot do escritório ou conecte aqui com uma Service Key. A chave fica só na memória: some quando o Frederico reinicia.';
+  $('#hs-form').hidden = hs.conectado;
+  $('#hs-acoes').hidden = !hs.conectado;
+  $('#hs-sair').hidden = !(hs.conectado && hs.modo === 'direto');
+
+  $('#ap-estado').textContent = ap.conectado ? 'conectado' : 'desconectado';
+  $('#ap-estado').className = 'estado ' + (ap.conectado ? 'ok' : '');
+  $('#ap-form').hidden = ap.conectado;
+  $('#ap-busca').hidden = !ap.conectado;
+}
+
+$('#ap-faixas').innerHTML = ['1,10', '11,20', '21,50', '51,100', '101,200', '201,500', '501,1000', '1001,2000', '2001,5000', '5001,10000', '10001,']
+  .map(f => `<label class="chk"><input type="checkbox" value="${f}">${f.replace(',', '–').replace(/–$/, '+')}</label>`).join('');
+
+$('#hs-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  try { await api('api/hubspot/conectar', { method: 'POST', body: { token: f.get('token'), portalId: f.get('portalId') } }); toast('HubSpot conectado.'); }
+  catch (er) { toast(er.message); }
+  e.target.reset(); integracoes();
+});
+$('#hs-sair').addEventListener('click', async () => { await api('api/hubspot/desconectar', { method: 'POST', body: {} }); integracoes(); });
+$('#hs-rec').addEventListener('click', e => {
+  if (!e.target.dataset.rec) return;
+  recHS = e.target.dataset.rec;
+  $$('#hs-rec button').forEach(b => b.classList.toggle('on', b === e.target));
+});
+$('#hs-listar').addEventListener('click', () => listarHS());
+
+async function listarHS(depois) {
+  $('#res-titulo').textContent = 'HubSpot · ' + NOMES_REC[recHS];
+  $('#resultados').innerHTML = '<p class="dim">Consultando o HubSpot…</p>'; $('#res-mais').innerHTML = '';
+  let r;
+  try { r = await api(`api/hubspot/registros?recurso=${recHS}${depois ? '&depois=' + encodeURIComponent(depois) : ''}`); }
+  catch (er) { $('#resultados').innerHTML = `<div class="alerta alto"><i>erro</i>${esc(er.message)}</div>`; return; }
+  $('#res-nota').textContent = `${r.linhas.length} registro(s) desta página · via ${r.origem} · amostra, não o total da conta`;
+  const col = {
+    contacts: [['Nome', p => [p.firstname, p.lastname].filter(Boolean).join(' ')], ['Empresa', p => p.company], ['Cargo', p => p.jobtitle], ['E-mail', p => p.email]],
+    companies: [['Empresa', p => p.name], ['Domínio', p => p.domain], ['Setor', p => p.industry], ['Cidade', p => p.city]],
+    deals: [['Negócio', p => p.dealname], ['Valor', p => p.amount ? din(Number(p.amount)) : ''], ['Etapa no HubSpot', p => p.dealstage], ['Fechamento', p => (p.closedate || '').slice(0, 10)]]
+  }[r.recurso];
+  $('#resultados').innerHTML = r.linhas.length ? `<table><tr>${col.map(c => `<th>${c[0]}</th>`).join('')}<th></th><th></th></tr>
+    ${r.linhas.map(x => `<tr>${col.map(c => `<td>${esc(c[1](x.props) || '')}</td>`).join('')}
+      <td>${x.url ? `<a class="lk" href="${esc(x.url)}" target="_blank" rel="noopener">abrir ↗</a>` : ''}</td>
+      <td class="r">${x.noCRM ? '<span class="ok">no CRM</span>' : `<button class="btn mini2" data-imp-hs="${esc(x.id)}" data-rec="${r.recurso}">Importar</button>`}</td></tr>`).join('')}</table>`
+    : '<p class="dim">Nenhum registro nesta página.</p>';
+  if (r.proxima) $('#res-mais').innerHTML = `<button class="btn" id="hs-prox">Próxima página</button>`;
+  const prox = $('#hs-prox'); if (prox) prox.onclick = () => listarHS(r.proxima);
+}
+
+$('#ap-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const chave = new FormData(e.target).get('chave');
+  try { await api('api/apollo/conectar', { method: 'POST', body: { chave } }); toast('Apollo conectado.'); }
+  catch (er) { toast(er.message); }
+  e.target.reset(); integracoes();
+});
+$('#ap-sair').addEventListener('click', async () => { await api('api/apollo/desconectar', { method: 'POST', body: {} }); integracoes(); });
+
+let buscaAP = null;
+$('#ap-busca').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  buscaAP = { cargos: f.get('cargos'), locais: f.get('locais'), dominios: f.get('dominios'), palavras: f.get('palavras'),
+              funcionarios: $$('#ap-faixas input:checked').map(i => i.value), pagina: 1 };
+  pesquisarAP();
+});
+async function pesquisarAP() {
+  $('#res-titulo').textContent = 'Apollo.io · pessoas';
+  $('#resultados').innerHTML = '<p class="dim">Pesquisando no Apollo…</p>'; $('#res-mais').innerHTML = '';
+  let r;
+  try { r = await api('api/apollo/pesquisa', { method: 'POST', body: buscaAP }); }
+  catch (er) { $('#resultados').innerHTML = `<div class="alerta alto"><i>erro</i>${esc(er.message)}</div>`; integracoes(); return; }
+  $('#res-nota').textContent = `página ${r.pagina} · ${r.total} no total segundo o Apollo · ${r.aviso}`;
+  $('#resultados').innerHTML = r.linhas.length ? `<table><tr><th>Pessoa</th><th>Cargo</th><th>Empresa</th><th>Domínio</th><th>Local</th><th></th></tr>
+    ${r.linhas.map(x => `<tr><td>${esc(x.nome)}</td><td>${esc(x.cargo)}</td><td>${esc(x.empresa)}</td><td>${esc(x.dominio)}</td><td>${esc(x.local)}</td>
+      <td class="r">${x.noCRM ? '<span class="ok">no CRM</span>' : `<button class="btn mini2" data-imp-ap="${esc(x.id)}">Importar</button>`}</td></tr>`).join('')}</table>`
+    : '<p class="dim">Nenhuma pessoa encontrada com esses filtros.</p>';
+  const nav = [];
+  if (r.pagina > 1) nav.push('<button class="btn" id="ap-ant">Página anterior</button>');
+  if (r.linhas.length === 10 && r.pagina * 10 < r.total) nav.push('<button class="btn" id="ap-prox">Próxima página</button>');
+  $('#res-mais').innerHTML = nav.join('');
+  if ($('#ap-ant')) $('#ap-ant').onclick = () => { buscaAP.pagina--; pesquisarAP(); };
+  if ($('#ap-prox')) $('#ap-prox').onclick = () => { buscaAP.pagina++; pesquisarAP(); };
+}
+
+$('#resultados').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b) return;
+  try {
+    if (b.dataset.impHs) await api('api/hubspot/importar', { method: 'POST', body: { recurso: b.dataset.rec, id: b.dataset.impHs } });
+    else if (b.dataset.impAp) await api('api/apollo/importar', { method: 'POST', body: { id: b.dataset.impAp } });
+    else return;
+    b.outerHTML = '<span class="ok">no CRM</span>';
+    toast('Lead importado em ' + (b.dataset.impHs ? 'HubSpot → CRM' : 'Apollo → CRM') + '.');
+    carregar();
+  } catch (er) { toast(er.message); }
+});
+
 function abrirAba(id) {
   $$('#abas button').forEach(b => b.classList.toggle('on', b.dataset.aba === id));
   $$('.aba').forEach(s => s.classList.toggle('on', s.id === 'aba-' + id));
 }
 $('#abas').addEventListener('click', e => { if (e.target.dataset.aba) abrirAba(e.target.dataset.aba); });
+integracoes();
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { $('#gaveta').hidden = true; aberto = null; } });
 
 carregar();

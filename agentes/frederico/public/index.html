@@ -20,6 +20,7 @@
     <button data-aba="pipeline">Pipeline</button>
     <button data-aba="crm">CRM</button>
     <button data-aba="analise">Análise</button>
+    <button data-aba="integracoes">Integrações</button>
     <button data-aba="empresa">Empresa &amp; ICP</button>
   </nav>
   <button class="btn prim novo" id="novo-lead">+ Novo lead</button>
@@ -69,6 +70,48 @@
     </div>
     <div class="bloco"><h2>Origem dos leads</h2><div id="origens"></div>
       <p class="dim">Captação: peça ao Frederico em <b>Conversar</b> sugestões de canais e mensagens para o nicho — ele usa esta tabela para ver o que já funciona.</p></div>
+  </section>
+
+  <section class="aba" id="aba-integracoes">
+    <div class="grade2">
+      <div class="bloco integ" id="hubspot">
+        <div class="cab"><h2>HubSpot</h2><span class="estado" id="hs-estado">verificando…</span></div>
+        <p class="dim" id="hs-modo"></p>
+        <form id="hs-form" class="conecta" autocomplete="off" hidden>
+          <label><span>Service Key ou token de acesso (só leitura)</span><input name="token" type="password" autocomplete="off" spellcheck="false"></label>
+          <label><span>Hub ID (opcional)</span><input name="portalId" inputmode="numeric"></label>
+          <button class="btn prim">Validar e conectar</button>
+        </form>
+        <p class="dim">Permissões necessárias: leitura de contatos, empresas e negócios. Não conceda escrita: o Frederico só lê e importa para o CRM dele.</p>
+        <div class="acoes" id="hs-acoes" hidden>
+          <div class="seg" id="hs-rec">
+            <button data-rec="contacts" class="on">Contatos</button><button data-rec="companies">Empresas</button><button data-rec="deals">Negócios</button>
+          </div>
+          <button class="btn" id="hs-listar">Listar</button>
+          <button class="btn ghost" id="hs-sair" hidden>Desconectar</button>
+        </div>
+      </div>
+      <div class="bloco integ" id="apollo">
+        <div class="cab"><h2>Apollo.io</h2><span class="estado" id="ap-estado">verificando…</span></div>
+        <p class="dim">Pesquisa de pessoas (People API Search): até 10 por página, sem e-mail nem telefone, sem enriquecimento e sem disparos.</p>
+        <form id="ap-form" class="conecta" autocomplete="off" hidden>
+          <label><span>Chave de API do Apollo</span><input name="chave" type="password" autocomplete="off" spellcheck="false"></label>
+          <button class="btn prim">Validar e conectar</button>
+        </form>
+        <form id="ap-busca" class="formprop" hidden>
+          <label><span>Cargos (separe por vírgula)</span><input name="cargos" placeholder="diretor de marketing, gerente de comunicação"></label>
+          <label><span>Local da empresa</span><input name="locais" placeholder="Belo Horizonte, Minas Gerais"></label>
+          <label><span>Domínios (opcional)</span><input name="dominios" placeholder="empresa.com.br"></label>
+          <label><span>Palavras-chave (opcional)</span><input name="palavras" placeholder="construtora, saúde, agronegócio"></label>
+          <label class="largo"><span>Tamanho da empresa (funcionários)</span><span class="faixas" id="ap-faixas"></span></label>
+          <div class="acoes largo"><button class="btn prim">Pesquisar</button><button class="btn ghost" type="button" id="ap-sair">Desconectar</button></div>
+        </form>
+      </div>
+    </div>
+    <div class="bloco"><div class="cab"><h2 id="res-titulo">Resultados</h2><span class="dim" id="res-nota"></span></div>
+      <div class="tabela" id="resultados"><p class="dim">Liste registros do HubSpot ou faça uma pesquisa no Apollo. Importar cria um lead em <b>Novo</b> (ou na etapa do negócio, no HubSpot) com próximo passo para hoje — nenhum contato é feito.</p></div>
+      <div class="acoes" id="res-mais"></div>
+    </div>
   </section>
 
   <section class="aba" id="aba-empresa">
