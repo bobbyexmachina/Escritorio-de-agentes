@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rosângela Maria · Financeiro & Performance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topo">
+  <div class="quem">
+    <div class="foto" aria-hidden="true">RM</div>
+    <div>
+      <strong>Rosângela Maria</strong>
+      <span>Financeiro &amp; Performance</span>
+    </div>
+  </div>
+  <nav class="abas" id="abas">
+    <button data-aba="painel" class="on">Painel</button>
+    <button data-aba="empresa">Empresa</button>
+    <button data-aba="lancamentos">Lançamentos</button>
+    <button data-aba="orcamento">Orçamento</button>
+    <button data-aba="operacao">Operação</button>
+    <button data-aba="cenarios">Cenários</button>
+    <button data-aba="relatorio">Relatório</button>
+  </nav>
+  <label class="mes">Mês analisado <select id="mes"></select></label>
+</header>
+
+<p class="aviso">Sou uma agente de gestão, não contadora, auditora, advogada ou consultora de investimentos. Obrigações fiscais, contábeis, jurídicas e decisões reguladas precisam de validação profissional. Não movimento dinheiro nem acesso bancos: trabalho só com os números lançados aqui.</p>
+
+<main>
+  <!-- PAINEL -->
+  <section class="aba on" id="aba-painel">
+    <div id="boasvindas"></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grade2">
+      <div class="bloco"><h2>Alertas</h2><div id="alertas"></div></div>
+      <div class="bloco"><h2>Caixa</h2><div id="caixa"></div></div>
+    </div>
+    <div class="bloco"><h2>Resultado &amp; margem</h2><div class="cards" id="resultado"></div></div>
+    <div class="bloco"><h2>Unit economics</h2><div class="cards" id="unit"></div></div>
+    <div class="bloco"><h2>Orçamento · planejado x realizado</h2><div id="orc-painel"></div></div>
+  </section>
+
+  <!-- EMPRESA / ONBOARDING -->
+  <section class="aba" id="aba-empresa">
+    <div class="bloco">
+      <h2>Sobre a empresa</h2>
+      <p class="dim">Só o que eu ainda não sei. O que ficar em branco aparece como “não informado” nos cálculos — eu não completo com média de mercado.</p>
+      <form id="f-empresa" class="formgrid"></form>
+      <div class="acoes"><button class="btn prim" id="salvar-empresa">Salvar</button><span id="ok-empresa" class="ok"></span></div>
+    </div>
+  </section>
+
+  <!-- LANÇAMENTOS -->
+  <section class="aba" id="aba-lancamentos">
+    <div class="bloco">
+      <h2>Novo lançamento</h2>
+      <form id="f-lanc" class="linha">
+        <input name="data" type="date" required title="Data">
+        <input name="descricao" placeholder="Descrição" required>
+        <select name="classe" required></select>
+        <input name="categoria" placeholder="Categoria (ex.: Folha, Freelancers)" list="cats" required>
+        <input name="valor" placeholder="Valor (1.234,56)" inputmode="decimal" required>
+        <input name="cliente" placeholder="Cliente / projeto (opcional)">
+        <select name="status"><option value="realizado">realizado</option><option value="previsto">previsto</option></select>
+        <button class="btn prim">Adicionar</button>
+      </form>
+      <datalist id="cats"></datalist>
+      <p class="dim">Valor sempre positivo: a <b>classe</b> diz se é entrada ou saída. Use <b>previsto</b> para o que ainda vai acontecer — é isso que alimenta a projeção de caixa.</p>
+    </div>
+    <div class="bloco">
+      <div class="cab">
+        <h2>Lançamentos <span class="cont" id="n-lanc"></span></h2>
+        <div class="acoes">
+          <label class="btn">Importar CSV<input type="file" id="csv" accept=".csv,text/csv" hidden></label>
+          <a class="btn" href="api/lancamentos.csv">Exportar CSV</a>
+          <a class="btn" href="api/modelo.csv">Planilha modelo</a>
+        </div>
+      </div>
+      <div id="imp-msg" class="dim"></div>
+      <div class="filtro"><input id="busca" type="search" placeholder="Filtrar por descrição, categoria ou cliente"></div>
+      <div class="tabela" id="t-lanc"></div>
+    </div>
+  </section>
+
+  <!-- ORÇAMENTO -->
+  <section class="aba" id="aba-orcamento">
+    <div class="bloco">
+      <h2>Planejar</h2>
+      <form id="f-orc" class="linha">
+        <input name="mes" type="month" required>
+        <select name="classe" required></select>
+        <input name="categoria" placeholder="Categoria (igual à dos lançamentos)" list="cats" required>
+        <input name="valor" placeholder="Valor planejado" inputmode="decimal" required>
+        <button class="btn prim">Adicionar</button>
+      </form>
+      <p class="dim">O realizado é a soma dos lançamentos realizados da mesma classe e categoria no mês.</p>
+    </div>
+    <div class="bloco"><h2>Orçamento</h2><div class="tabela" id="t-orc"></div></div>
+  </section>
+
+  <!-- OPERAÇÃO -->
+  <section class="aba" id="aba-operacao">
+    <div class="bloco">
+      <h2>Números da operação por mês</h2>
+      <p class="dim">Para ticket, custo por venda, CAC/CPA e ponto de equilíbrio. Investimento em aquisição = o que foi gasto em marketing e comercial para conseguir clientes.</p>
+      <div class="tabela" id="t-op"></div>
+      <div class="acoes"><input type="month" id="op-mes"><button class="btn" id="op-add">Adicionar mês</button></div>
+    </div>
+  </section>
+
+  <!-- CENÁRIOS -->
+  <section class="aba" id="aba-cenarios">
+    <div class="bloco">
+      <h2>Hipóteses</h2>
+      <p class="dim">Partem da média dos últimos 3 meses realizados. Os percentuais abaixo são <b>hipóteses</b>: ajuste à realidade da produtora.</p>
+      <form id="f-cen" class="cen"></form>
+      <div class="acoes"><button class="btn prim" id="salvar-cen">Recalcular</button></div>
+    </div>
+    <div class="bloco"><h2>Resultado dos cenários</h2><div id="cenarios"></div></div>
+  </section>
+
+  <!-- RELATÓRIO -->
+  <section class="aba" id="aba-relatorio">
+    <div class="bloco">
+      <div class="cab">
+        <h2>Relatório no formato padrão</h2>
+        <div class="acoes"><button class="btn" id="copiar">Copiar</button><a class="btn" id="baixar" download="relatorio-financeiro.md">Baixar .md</a></div>
+      </div>
+      <article class="md" id="relatorio"></article>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

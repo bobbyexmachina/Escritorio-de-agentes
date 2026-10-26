@@ -6,3 +6,6 @@ data/*.json
 !data/config.exemplo.json
 data/logs/
 data/reunioes/
+
+# os números de cada agente ficam na máquina
+agentes/*/data/

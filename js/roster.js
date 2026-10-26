@@ -76,10 +76,11 @@ const ROSTER = (() => {
       look: { skin: '#f0c29b', hair: '#140f0c', style: 'curto', shirt: '#e5e7eb', pants: '#1f2937', glasses: 'retangular', beard: 'cheia' }
     },
     {
-      key: 'comercial', name: 'Léo', role: 'Comercial & Orçamentos', emoji: '🎯', cat: 'sugerido', dept: 'vendas',
-      desc: 'Encontra empresas que precisam de vídeo, qualifica e monta a primeira proposta.',
-      why: 'É o topo do funil: sem projeto novo entrando, o resto do estúdio fica parado.',
-      look: { skin: '#f0c29b', hair: '#241a13', style: 'fade', shirt: '#f97316', pants: '#1b2030', glasses: null, beard: 'cavanhaque' }
+      key: 'frederico', name: 'Frederico', role: 'Comercial & CRM', emoji: '🤝',
+      cat: 'detectado', system: 'CRM Comercial', sistema: 'frederico', dept: 'vendas',
+      desc: 'Organiza prospecção, qualificação, follow-up, propostas e o pipeline no formato do CRM padrão.',
+      why: 'Nenhuma oportunidade sem próximo passo, data e motivo. Sem spam, sem pressão e sem preço que você não informou.',
+      look: { skin: '#e0a878', hair: '#241a13', style: 'fade', shirt: '#1f2937', pants: '#111827', glasses: null, beard: 'cavanhaque' }
     },
     {
       key: 'social', name: 'Duda', role: 'Social Media', emoji: '📱', cat: 'sugerido', dept: 'marketing',
@@ -88,10 +89,11 @@ const ROSTER = (() => {
       look: { skin: '#f7d7bd', hair: '#8b5a2b', style: 'longo', shirt: '#f472b6', pants: '#1b2030', glasses: null, beard: null }
     },
     {
-      key: 'financeiro', name: 'Rafa', role: 'Financeiro', emoji: '🧾', cat: 'sugerido', dept: 'financeiro',
-      desc: 'Acompanha entradas, saídas, notas e o caixa por projeto, e avisa quando algo foge do previsto.',
-      why: 'Saber a margem real de cada vídeo mostra o que vale a pena vender mais.',
-      look: { skin: '#c9854f', hair: '#1a120d', style: 'curto', shirt: '#22c55e', pants: '#26304a', glasses: 'retangular', beard: 'cheia' }
+      key: 'rosangela', name: 'Rosângela Maria', role: 'Financeiro & Performance', emoji: '📊',
+      cat: 'detectado', system: 'Painel Financeiro & Performance', sistema: 'rosangela', dept: 'financeiro',
+      desc: 'Organiza caixa, resultado, margem, unit economics, orçamento, alertas e cenários, sempre mostrando fórmula, entradas e interpretação.',
+      why: 'Decidir preço, contratação e investimento com o número na mão. Ela nunca inventa valor: o que falta aparece como não informado.',
+      look: { skin: '#c9854f', hair: '#3a2416', style: 'longo', shirt: '#7628f1', pants: '#1b2030', glasses: 'retangular', beard: null }
     },
     {
       key: 'inovacao', name: 'Cami', role: 'Pesquisa & Inovação', emoji: '🧪', cat: 'sugerido', dept: 'inovacao',
@@ -245,7 +247,11 @@ const ROSTER = (() => {
 
   const get = (id) => team.find(a => a.id === id);
   const all = () => team;
-  const isHired = (key) => team.some(a => a.key === key);
+  // quem já tem o sistema da vaga (cadastrado à mão, por exemplo) conta como contratado
+  const isHired = (key) => {
+    const c = CATALOG.find(c => c.key === key);
+    return team.some(a => a.key === key || (c && c.sistema && a.sistema === c.sistema));
+  };
   const count = (st) => team.filter(a => a.status === st).length;
 
   return { BOSSES, CATALOG, load, save, reset, hire, hireCustom, fire,

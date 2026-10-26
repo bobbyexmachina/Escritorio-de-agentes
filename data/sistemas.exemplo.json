@@ -13,8 +13,12 @@
     "tipo": "local",
     "pasta": "exemplo-agente",
     "comando": "node",
-    "args": ["server.js"],
-    "env": { "PORT": "4401" },
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4401"
+    },
     "porta": 4401,
     "abre": "/",
     "sobre": "Um sistema mínimo que vem junto com o escritório, para mostrar como ele liga, embute e conversa com um agente. Copie a pasta exemplo-agente como ponto de partida, ou cadastre o seu projeto pela tela.",
@@ -22,6 +26,48 @@
       "Clique em Ligar e o escritório sobe o node server.js desta pasta",
       "Em Conversar, o Claude Code abre dentro da pasta do sistema e responde sobre ele",
       "Para tirar o exemplo, apague a entrada \"exemplo\" deste arquivo e demita o agente"
+    ]
+  },
+  "rosangela": {
+    "nome": "Rosângela Maria · Financeiro & Performance",
+    "tipo": "local",
+    "pasta": "agentes/rosangela",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4410"
+    },
+    "porta": 4410,
+    "abre": "/",
+    "sobre": "Painel financeiro da Ovelha Rocks: caixa, resultado, margem, unit economics, orçamento, alertas, cenários e o relatório no formato padrão. Todo cálculo mostra fórmula, entradas, resultado e interpretação; o que falta aparece como não informado. Os números ficam em agentes/rosangela/data/financeiro.json e não saem da máquina.",
+    "dicas": [
+      "Comece pela aba Empresa: ela pergunta só o que falta para o Painel Inicial",
+      "Lance os números ou importe a planilha modelo (CSV) na aba Lançamentos",
+      "Em Conversar, a Rosângela lê os mesmos números e responde no formato padrão",
+      "Ela não movimenta dinheiro, não paga contas e não acessa banco"
+    ]
+  },
+  "frederico": {
+    "nome": "Frederico · Comercial & CRM",
+    "tipo": "local",
+    "pasta": "agentes/frederico",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4411"
+    },
+    "porta": 4411,
+    "abre": "/",
+    "sobre": "CRM da Ovelha Rocks no formato padrão: pipeline Novo > Contato > Qualificado > Proposta > Negociação > Ganho/Perdido, follow-ups com data e motivo, qualificação por necessidade, prioridade, capacidade, timing e aderência, propostas e análise do funil. Não envia mensagens: entrega textos para copiar. Os leads ficam em agentes/frederico/data/crm.json.",
+    "dicas": [
+      "Comece pela aba Empresa & ICP: ela pergunta só o que falta",
+      "Importe a planilha no formato do CRM padrão ou cadastre com + Novo lead",
+      "Abra um lead para ver diagnóstico, mensagem sugerida e risco de perda",
+      "Em Conversar, o Frederico lê o mesmo CRM e sugere canais e mensagens"
     ]
   }
 }

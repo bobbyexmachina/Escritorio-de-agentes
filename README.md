@@ -38,6 +38,21 @@ A marca da Ovelha Rocks fica em `img/`:
 `"logo"` e `"cor"` em `data/config.json` trocam a logo das placas e o roxo dos
 detalhes. A luz do andar é âmbar, como no modelo de escritório de referência.
 
+## Os agentes da Ovelha Rocks
+
+Cada agente tem um sistema próprio em `agentes/`, que o escritório liga e
+mostra no monitor dele. Em **💬 Conversar**, o Claude Code abre na pasta do
+agente e segue o `CLAUDE.md` de lá (a persona e as regras dele).
+
+| Agente | Pasta | Porta | O que faz |
+| --- | --- | --- | --- |
+| Rosângela Maria · Financeiro & Performance | `agentes/rosangela` | 4410 | Caixa, resultado, margem, unit economics, orçamento, alertas, cenários e o relatório no formato padrão. Todo cálculo mostra fórmula, entradas, resultado e interpretação. |
+| Frederico · Comercial & CRM | `agentes/frederico` | 4411 | CRM padrão, pipeline, follow-ups com data e motivo, qualificação, propostas e análise do funil. Não envia nada: entrega textos para copiar. |
+
+Os números de cada agente ficam em `agentes/<nome>/data/` e não vão para o
+git. Pela linha de comando: `node agentes/rosangela/relatorio.js` e
+`node agentes/frederico/relatorio.js`.
+
 ## Começar
 
 Precisa do [Node.js](https://nodejs.org) 18 ou mais novo.
