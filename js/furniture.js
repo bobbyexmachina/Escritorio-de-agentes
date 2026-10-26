@@ -75,8 +75,8 @@ const FURN = (() => {
   workSlots.push({ id: 'DIR-1', room: 'diretoria', label: 'Mesa do sócio',
                    x: seatA.x, y: seatA.y, facing: 's', obj: mesaA, vip: true });
 
-  add({ t: 'rug', x: 1.8, y: 8.4, w: 5.8, d: 3.6, c: '#1a1817' });
-  solto({ t: 'sofa', x: 2.2, y: 8.8, w: 4.6, d: 1.4, dir: 'n', c: '#2b2927' });
+  add({ t: 'rug', x: 1.8, y: 8.4, w: 5.8, d: 3.6, c: '#4a3628' });
+  solto({ t: 'sofa', x: 2.2, y: 8.8, w: 4.6, d: 1.4, dir: 'n', c: '#6d6964' });
   solto({ t: 'lowTable', x: 3.5, y: 10.7, w: 2, d: 1 });
   solto({ t: 'premios', x: 12.6, y: 5.6, w: 1.2, d: 3.8 });
   solto({ t: 'cameraCine', x: 9.8, y: 2.0 });
@@ -180,7 +180,7 @@ const FURN = (() => {
   /* ---------- EDIÇÃO ---------- */
   estacao('edicao', 'EDI', 26.4, 36.4, 'edi');
   estacao('edicao', 'EDI', 32.2, 36.4, 'edi');
-  const sofaEd = solto({ t: 'sofa', x: 28.2, y: 41.8, w: 4, d: 1.4, dir: 's', c: '#262729',
+  const sofaEd = solto({ t: 'sofa', x: 28.2, y: 41.8, w: 4, d: 1.4, dir: 's', c: '#55524e',
                          dk: 32.2 + 43.2 - .3 });
   [29.0, 30.2, 31.4].forEach((x, i) =>
     descanso('EDS' + i, 'sofá da edição', x, 42.5, 'n', 'acompanhando o corte', sofaEd, true));
@@ -188,7 +188,7 @@ const FURN = (() => {
   /* ---------- CORREÇÃO DE COR ---------- */
   estacao('cor', 'COR', 39.6, 37.4, 'cor');
   solto({ t: 'refMonitor', x: 39.4, y: 34.3, w: 3.4, d: .35 });
-  const sofaCor = solto({ t: 'sofa', x: 38.4, y: 41.8, w: 3.6, d: 1.4, dir: 's', c: '#232323',
+  const sofaCor = solto({ t: 'sofa', x: 38.4, y: 41.8, w: 3.6, d: 1.4, dir: 's', c: '#4f4c49',
                           dk: 42.0 + 43.2 - .3 });
   [39.4, 41.0].forEach((x, i) =>
     descanso('CRS' + i, 'sofá da cor', x, 42.5, 'n', 'aprovando a cor', sofaCor, true));
@@ -234,6 +234,22 @@ const FURN = (() => {
   [2, 17.5, 31.5, 44].forEach(x => solto({ t: 'plant', x, y: 14.1, k: 2 }));
   [2, 15, 38, 50, 61.6].forEach(x => solto({ t: 'plant', x, y: 30.1, k: 2 }));
 
+  /* ---------- verde: vaso grande em cada canto livre e floreiras nos corredores ---------- */
+  const pertoDePorta = (x, y) => WORLD.DOORS.some(d => Math.abs(d.x - x) <= 2 && Math.abs(d.y - y) <= 2);
+  const temLugar = (x, y) => [...workSlots, ...restSlots, ...meetSlots]
+    .some(s => Math.abs(Math.floor(s.x) - x) <= 1 && Math.abs(Math.floor(s.y) - y) <= 1);
+  for (const r of Object.values(R)) {
+    if (r.bw === undefined || r.id === 'cinema') continue;
+    for (const [cx, cy] of [[r.x1, r.y1], [r.x2, r.y1], [r.x1, r.y2], [r.x2, r.y2]]) {
+      if (!WORLD.walkable(cx, cy) || pertoDePorta(cx, cy) || temLugar(cx, cy)) continue;
+      solto({ t: 'plant', x: cx + .05, y: cy + .05, k: 2, s: 1.25 });
+    }
+  }
+  [[8.5, 5], [19, 6], [29.5, 3], [37, 4], [45, 7], [57, 4]]
+    .forEach(([x, w]) => solto({ t: 'jardineira', x, y: 16.25, w, d: .6 }));
+  [[9, 6], [21, 6], [33, 8], [46, 6], [57, 5]]
+    .forEach(([x, w]) => solto({ t: 'jardineira', x, y: 32.25, w, d: .6 }));
+
   /* ===========================================================
      DESENHO
      =========================================================== */
@@ -250,7 +266,7 @@ const FURN = (() => {
     chairGamer: 78, chairBoss: 84, chairSimple: 58, chairStudio: 78, expositor: 96,
     poltrona: 60, banco: 30, arquivo: 64, cofre: 58, caixaSom: 84, pingPong: 50,
     pilhaCaixas: 118, poolTable: 56, foosball: 52, sofa: 60,
-    rug: 12, lowTable: 40, cooler: 64
+    rug: 12, lowTable: 40, cooler: 64, plant: 100, jardineira: 70
   };
   const ESC_CACHE = 2;
   const cacheMovel = new Map();
@@ -422,7 +438,7 @@ const FURN = (() => {
     chairBoss(ctx, o)  {
       cadeiraBase(ctx, o, '#1a1419', '#7c6cff', 33, true); },
     chairSimple(ctx, o){
-      cadeiraBase(ctx, o, '#1c2234', '#4a5a86', 22, false); },
+      cadeiraBase(ctx, o, '#2a2826', WORLD.C.luz, 22, false); },
 
     /* ---------- o resto do mobiliário ---------- */
     arcade(ctx, o, t) {
@@ -653,22 +669,26 @@ const FURN = (() => {
       caneca(ctx, x + w - .35, y + .5, 40, 0, .8);
     },
 
-    plant(ctx, o, t) {
+    plant(ctx, o) {
       const { x, y } = o;
-      ISO.shadow(ctx, x + .5, y + .5, .5, .26);
-      ISO.cyl(ctx, x + .5, y + .5, .3, 20, 0, o.k === 2 ? '#8d8e8a' : o.k ? '#3a2b22' : '#242b3e');
-      const base = S(x + .5, y + .5, 20);
-      const nn = o.k ? 7 : 9;
-      for (let i = 0; i < nn; i++) {
-        const a = (i / nn) * Math.PI * 2 + Math.sin(t * .5 + i) * .07;
-        const len = 20 + (i % 3) * 9;
-        ctx.strokeStyle = i % 2 ? '#1f7a44' : '#2a9c56';
-        ctx.lineWidth = o.k ? 5 : 3.4; ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(base.x, base.y);
-        ctx.quadraticCurveTo(base.x + Math.cos(a) * len * .5, base.y - len * .75,
-                             base.x + Math.cos(a) * len, base.y - len * .5 - 8);
-        ctx.stroke();
+      const sz = o.s || 1;
+      ISO.shadow(ctx, x + .5, y + .5, .5 * sz, .28);
+      const pote = o.k === 2 ? '#6e6a65' : o.k ? '#3a2b22' : '#24232a';
+      ISO.cyl(ctx, x + .5, y + .5, .3 * sz, 20 * sz, 0, pote);
+      ISO.cyl(ctx, x + .5, y + .5, .26 * sz, 1.5, 20 * sz - 1, '#2a1d14');
+      folhagem(ctx, S(x + .5, y + .5, 20 * sz), sz, Math.round(x * 7 + y * 3));
+    },
+
+    /* floreira comprida de madeira, como as das divisórias da referência */
+    jardineira(ctx, o) {
+      const { x, y, w, d } = o;
+      ISO.shadow(ctx, x + w / 2, y + d / 2, Math.max(w, d) * .5, .26);
+      ISO.box(ctx, x, y, w, d, 18, 0, '#5c4330', { top: '#2a1d14' });
+      const n = Math.max(2, Math.round(Math.max(w, d) / .55));
+      for (let i = 0; i < n; i++) {
+        const f = (i + .5) / n;
+        const px = w > d ? x + w * f : x + w / 2, py = w > d ? y + d / 2 : y + d * f;
+        folhagem(ctx, S(px, py, 18), .55, i * 3 + 1);
       }
     },
 
@@ -714,20 +734,19 @@ const FURN = (() => {
     deskStudio(ctx, o, t) {
       const { x, y, w, d } = o;
       const acc = o.cor || '#ffffff';
+      const luz = WORLD.C.luz;
       ISO.shadow(ctx, x + w / 2, y + d / 2, Math.max(w, d) * .55, .28);
-      if (o.busy) {
-        ctx.save(); ctx.globalCompositeOperation = 'lighter';
-        const gp = S(x + w / 2, y + d / 2, 6);
-        ISO.glow(ctx, gp.x, gp.y, 70, acc, .14);
-        ctx.restore();
-      }
-      ISO.box(ctx, x + .06,     y + .1, .22, d - .2, 25, 0, '#8a8b87');
-      ISO.box(ctx, x + w - .28, y + .1, .22, d - .2, 25, 0, '#8a8b87');
-      ISO.box(ctx, x - .04, y - .04, w + .08, d + .08, 3, 25, '#d8d5ce', { top: '#e6e3dc' });
+      ctx.save(); ctx.globalCompositeOperation = 'lighter';
+      const gp = S(x + w / 2, y + d / 2, 6);
+      ISO.glow(ctx, gp.x, gp.y, 78, luz, o.busy ? .16 : .08);
+      ctx.restore();
+      ISO.box(ctx, x + .06,     y + .1, .16, d - .2, 25, 0, '#1d1c1b');
+      ISO.box(ctx, x + w - .22, y + .1, .16, d - .2, 25, 0, '#1d1c1b');
+      ISO.box(ctx, x - .04, y - .04, w + .08, d + .08, 3, 25, '#5e412d', { top: '#71503a' });
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       ISO.quad(ctx, [S(x - .04, y + d + .04, 25.6), S(x + w + .04, y + d + .04, 25.6),
                      S(x + w + .04, y + d + .04, 24.2), S(x - .04, y + d + .04, 24.2)],
-               ISO.rgba(acc, o.busy ? .75 : .3));
+               ISO.rgba(luz, o.busy ? .8 : .4));
       ctx.restore();
 
       const monY = y + .12, tecY = y + .8;
@@ -1105,12 +1124,12 @@ const FURN = (() => {
     meetTable(ctx, o, t) {
       const { x, y, w, d } = o;
       ISO.shadow(ctx, x + w / 2, y + d / 2, 3.2, .3);
-      ISO.box(ctx, x + w / 2 - .5, y + d / 2 - .4, 1, .8, 24, 0, '#171b2c');
-      ISO.box(ctx, x, y, w, d, 4, 24, '#1b2036', { top: '#2b3350' });
-      ISO.plane(ctx, x + .25, y + .25, w - .5, d - .5, TOP + .2, 'rgba(120,160,255,.08)');
+      ISO.box(ctx, x + w / 2 - .5, y + d / 2 - .4, 1, .8, 24, 0, '#1d1c1b');
+      ISO.box(ctx, x, y, w, d, 4, 24, '#4a3426', { top: '#5e412d' });
+      ISO.plane(ctx, x + .25, y + .25, w - .5, d - .5, TOP + .2, 'rgba(255,200,140,.06)');
       ctx.save(); ctx.globalCompositeOperation = 'lighter';
       ISO.plane(ctx, x + w / 2 - 1.2, y + d / 2 - .5, 2.4, 1, TOP + .3,
-                ISO.rgba(ISO.hsl((t * 26) % 360, 90, 58), .16));
+                ISO.rgba(WORLD.C.marca, .22 + .06 * Math.sin(t * 1.4)));
       ctx.restore();
       caneca(ctx, x + 1.2, y + d / 2, TOP, 0, .8);
       caneca(ctx, x + w - 1.2, y + d / 2, TOP, 1, .8);
@@ -1515,6 +1534,21 @@ const FURN = (() => {
         ISO.box(ctx, a[0] - .02, a[1] - .02, a[2] + .04, a[3] + .04, 3, ASSENTO + 6, corD, { top: corL });
       }
     }
+  }
+
+  /** tufo de folhas largas, de trás para a frente */
+  function folhagem(ctx, b, sz, seed) {
+    const n = 13;
+    const cores = ['#1f5e31', '#2d7a40', '#3a9450', '#4aa85e'];
+    for (let camada = 0; camada < 2; camada++)
+      for (let i = 0; i < n; i++) {
+        const f = i / (n - 1);
+        const a = -Math.PI / 2 + (f - .5) * (camada ? 2.2 : 3.0) + Math.sin(seed + i * 2.3) * .12;
+        const L = (camada ? 24 : 30) * sz * (.75 + .35 * Math.abs(Math.sin(seed * .7 + i)));
+        const cx = b.x + Math.cos(a) * L * .55, cy = b.y + Math.sin(a) * L * .55 - 4 * sz;
+        ctx.fillStyle = cores[(i + camada * 2 + Math.abs(seed)) % 4];
+        ctx.beginPath(); ctx.ellipse(cx, cy, L * .5, L * .14, a, 0, Math.PI * 2); ctx.fill();
+      }
   }
 
   function dispenser(ctx, cx, cy, color, t) {

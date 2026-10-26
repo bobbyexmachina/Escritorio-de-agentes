@@ -24,7 +24,7 @@ const ROOT = __dirname;
 const CONFIG_ARQ = path.join(ROOT, 'data', 'config.json');
 const CONFIG_PADRAO = {
   nome: 'Ovelha Rocks', subtitulo: 'produtora de vídeo · Belo Horizonte',
-  dono: 'Bobby', porta: 4321, cor: '#ff5a1f', logo: 'img/logo.svg',
+  dono: 'Bobby', porta: 4321, cor: '#7628f1', logo: 'img/logo-claro.png',
   empresa: 'Ovelha Rocks: produtora de vídeos institucionais e publicitários em live action, animação 2D, motion graphics e vídeos com Inteligência Artificial. Belo Horizonte/MG, 15 anos de mercado.',
   reuniao: { automatica: false, dias: [1, 5], hora: 11, minuto: 0, duracaoMin: 30, modelo: 'sonnet',
              foco: '', meta: { descricao: '', alvo: 0, feito: 0, unidade: 'resultados', ate: '' } }
@@ -838,7 +838,7 @@ const servidor = http.createServer(async (req, res) => {
 
   /* ---- estáticos ---- */
   const rel = rota === '/' ? '/index.html' : rota;
-  if (!/^\/(index\.html|favicon\.svg|css\/|js\/|img\/)/.test(rel)) {
+  if (!/^\/(index\.html|css\/|js\/|img\/)/.test(rel)) {
     res.writeHead(404, { 'Content-Type': 'text/plain' }).end('404'); return;
   }
   const arquivo = path.join(ROOT, path.normalize(rel).replace(/^(\.\.[/\\])+/, ''));

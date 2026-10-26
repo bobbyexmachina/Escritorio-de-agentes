@@ -20,9 +20,10 @@ const WORLD = (() => {
 
   /* ---------- paleta: concreto, vidro e a cor da marca ---------- */
   const C = {
-    marca:   E.cor || '#ff5a1f',
+    marca:   E.cor || '#7628f1',
+    luz:     '#ffa940',                 // a luz âmbar que banha o andar
     dark:    '#141516',
-    wall:    '#7a7b78', wallTop: '#a3a49f',
+    wall:    '#635e58', wallTop: '#857f78',
     junta:   'rgba(0,0,0,.16)'
   };
 
@@ -85,6 +86,19 @@ const WORLD = (() => {
       desc: 'Recepção, elevador e os corredores de concreto entre as salas.'
     }
   };
+
+  /* pisos: madeira escura onde se recebe gente, concreto quente no resto */
+  const PISOS = {
+    diretoria: ['#3d2a1e', '#432f22', true], reuniao: ['#3a2a20', '#3f2e23', true],
+    cinema: ['#1c1418', '#1f161a'], ia: ['#24232a', '#27262d'],
+    financeiro: ['#2e2b28', '#322f2b'], vendas: ['#2e2b28', '#322f2b'],
+    marketing: ['#2e2b28', '#322f2b'], funcionarios: ['#2e2b28', '#322f2b'],
+    inovacao: ['#2c2b27', '#302f2a'], animacao: ['#2e2b28', '#322f2b'],
+    edicao: ['#232224', '#262527'], cor: ['#2b2b2b', '#2e2e2e'],
+    jogos: ['#3a2a20', '#3f2e23', true], corredor: ['#34312d', '#37342f']
+  };
+  for (const [id, [a, b, madeira]] of Object.entries(PISOS))
+    Object.assign(ROOMS[id], { floorA: a, floorB: b, madeira: !!madeira });
 
   /** ordem em que as salas aparecem no painel */
   const ORDEM = ['diretoria', 'reuniao', 'cinema', 'ia', 'financeiro', 'vendas', 'marketing',
@@ -166,9 +180,9 @@ const WORLD = (() => {
 
   /* ---------- painéis nas paredes altas ---------- */
   const SIGNS = [
-    { o: 'n', x: 1,  y: 0,  len: 6,  kind: 'eventos'    },  // diretoria: agenda
-    { o: 'n', x: 8,  y: 0,  len: 7,  kind: 'logo'       },  // diretoria: a marca
-    { o: 'w', x: 0,  y: 3,  len: 7,  kind: 'quadro'     },  // diretoria: ideias
+    { o: 'n', x: 8,  y: 0,  len: 7,  kind: 'logo'       },  // diretoria: a marca (janelas à esquerda)
+    { o: 'w', x: 0,  y: 1,  len: 5,  kind: 'quadro'     },  // diretoria: ideias
+    { o: 'w', x: 0,  y: 7,  len: 6,  kind: 'eventos'    },  // diretoria: agenda
     { o: 'n', x: 17, y: 0,  len: 2,  kind: 'logoMini'   },  // reunião
     { o: 'n', x: 30, y: 0,  len: 13, kind: 'cinema'     },  // a tela de cinema
     { o: 'n', x: 46, y: 0,  len: 7,  kind: 'ia'         },  // estúdio de IA
@@ -240,6 +254,64 @@ const WORLD = (() => {
     return cv;
   }
 
+  /* ---- janelas: a cidade à noite atrás do concreto ----
+     As paredes altas (norte e oeste) viram vãos de vidro do piso ao teto,
+     com um pilar de concreto a cada seis módulos. Onde há painel, tela ou
+     a sala de cinema, a parede continua cega.                            */
+  function temJanela(x, y, o) {
+    if (o === 'n' ? (x % 6 === 0 || x === 0 || x === W - 1) : (y % 6 === 0 || y === 0 || y === H - 1)) return false;
+    const sala = roomOf[idx(o === 'n' ? x : x + 1, o === 'n' ? y + 1 : y)];
+    if (sala === 'cinema') return false;
+    return !SIGNS.some(s => s.o === o && (o === 'n'
+      ? (s.y === y && x >= s.x - 1 && x <= s.x + s.len)
+      : (s.x === x && y >= s.y - 1 && y <= s.y + s.len)));
+  }
+  const janelas = {};
+  function texturaJanela(o, v) {
+    const ck = o + v;
+    if (janelas[ck]) return janelas[ck];
+    const T = ISO.TW, cv = document.createElement('canvas');
+    cv.width = T; cv.height = WALL_H;
+    const c = cv.getContext('2d');
+    const y0 = 10, y1 = WALL_H - 14;
+    // céu noturno com o roxo da marca no horizonte
+    const g = c.createLinearGradient(0, y0, 0, y1);
+    g.addColorStop(0, '#07081a'); g.addColorStop(.65, '#1a1438'); g.addColorStop(1, '#3b2350');
+    c.fillStyle = g; c.fillRect(0, y0, T, y1 - y0);
+    let sd = 17 + v * 31 + (o === 'n' ? 0 : 7);
+    const rnd = () => (sd = (sd * 9301 + 49297) % 233280) / 233280;
+    // estrelas
+    c.fillStyle = 'rgba(255,255,255,.5)';
+    for (let i = 0; i < 4; i++) c.fillRect(rnd() * T, y0 + rnd() * 26, 1, 1);
+    // prédios ao fundo e à frente, com janelas acesas
+    for (const [cor, alto, ac] of [['#141428', 30, .35], ['#0c0c1c', 50, .8]]) {
+      let u = -rnd() * 10;
+      while (u < T) {
+        const bw = 8 + rnd() * 14, bh = 12 + rnd() * alto;
+        c.fillStyle = cor; c.fillRect(u, y1 - bh, bw, bh);
+        for (let wy = y1 - bh + 3; wy < y1 - 3; wy += 4)
+          for (let wx = u + 2; wx < u + bw - 2; wx += 3)
+            if (rnd() > .62) {
+              c.fillStyle = rnd() > .3 ? `rgba(255,190,110,${ac})` : `rgba(200,180,255,${ac})`;
+              c.fillRect(wx, wy, 1.4, 1.6);
+            }
+        u += bw + 1 + rnd() * 3;
+      }
+    }
+    // reflexo no vidro e sombra do lado oeste
+    c.fillStyle = 'rgba(255,255,255,.05)';
+    c.beginPath(); c.moveTo(T * .2, y0); c.lineTo(T * .55, y0); c.lineTo(T * .15, y1); c.lineTo(0, y1); c.lineTo(0, y0 + 20); c.closePath(); c.fill();
+    if (o === 'w') { c.fillStyle = 'rgba(0,0,0,.22)'; c.fillRect(0, y0, T, y1 - y0); }
+    // caixilho preto: travessas e montante
+    c.fillStyle = '#111114';
+    c.fillRect(0, y0, T, 2); c.fillRect(0, y1 - 2, T, 2); c.fillRect(0, y0, 2, y1 - y0);
+    c.fillRect(0, y0 + (y1 - y0) * .62, T, 1.5);
+    // peitoril com luz âmbar embutida
+    c.fillStyle = ISO.rgba(C.luz, .55); c.fillRect(0, y1, T, 1.5);
+    janelas[ck] = cv;
+    return cv;
+  }
+
   /* ---- chão ----
      O piso é fixo: ele é pintado uma vez num canvas próprio e depois só
      copiado. Concreto polido com juntas de dilatação a cada 4 tiles e
@@ -277,18 +349,20 @@ const WORLD = (() => {
       if (y % 4 === 0) { const a = P(x, y), b = P(x + 1, y); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y); }
     }
     c.stroke();
-    // piso de madeira na diretoria: réguas finas
-    const d = ROOMS.diretoria;
-    c.strokeStyle = 'rgba(0,0,0,.18)';
+    // salas de piso de madeira: réguas finas
+    c.strokeStyle = 'rgba(0,0,0,.2)';
     c.beginPath();
-    for (let x = d.x1; x <= d.x2 + 1; x += 0.5) {
-      const a = P(x, d.y1), b = P(x, d.y2 + 1); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y);
+    for (const d of Object.values(ROOMS)) {
+      if (!d.madeira) continue;
+      for (let x = d.x1; x <= d.x2 + 1; x += 0.5) {
+        const a = P(x, d.y1), b = P(x, d.y2 + 1); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y);
+      }
     }
     c.stroke();
 
     // faixa guia da marca nos corredores
     c.save();
-    c.strokeStyle = ISO.rgba(C.marca, .5); c.lineWidth = 2;
+    c.strokeStyle = ISO.rgba(C.luz, .35); c.lineWidth = 2;
     c.beginPath();
     for (const yy of [15.5, 31.5]) {
       const a = P(1.5, yy), b = P(W - 1.5, yy); c.moveTo(a.x, a.y); c.lineTo(b.x, b.y);
@@ -305,12 +379,12 @@ const WORLD = (() => {
       for (let lx = r.x1 + 2.5; lx < r.x2; lx += 6) {
         for (let ly = r.y1 + 2.5; ly < r.y2; ly += 5) {
           const p = P(lx, ly);
-          ISO.glow(c, p.x, p.y, 120, '#fff1dc', .05);
+          ISO.glow(c, p.x, p.y, 130, '#ffc77a', .085);
         }
       }
     }
     for (let lx = 4; lx < W - 2; lx += 8) {
-      for (const ly of [15.5, 31.5]) { const p = P(lx, ly); ISO.glow(c, p.x, p.y, 90, '#fff1dc', .04); }
+      for (const ly of [15.5, 31.5]) { const p = P(lx, ly); ISO.glow(c, p.x, p.y, 100, '#ffc77a', .07); }
     }
     c.restore();
 
@@ -380,6 +454,17 @@ const WORLD = (() => {
       ISO.quad(ctx, [f.pts[3], f.pts[2],
                      { x: f.pts[2].x, y: f.pts[2].y - 4 }, { x: f.pts[3].x, y: f.pts[3].y - 4 }],
                'rgba(0,0,0,.22)');
+      if (occ) {
+        // fita de LED âmbar correndo no pé da mureta
+        ctx.save(); ctx.globalCompositeOperation = 'lighter';
+        ISO.quad(ctx, [{ x: f.pts[3].x, y: f.pts[3].y - 5 }, { x: f.pts[2].x, y: f.pts[2].y - 5 },
+                       { x: f.pts[2].x, y: f.pts[2].y - 7 }, { x: f.pts[3].x, y: f.pts[3].y - 7 }],
+                 ISO.rgba(C.luz, .5));
+        ctx.restore();
+      } else if (detalhe && temJanela(x, y, f.o)) {
+        const tex = texturaJanela(f.o, (x * 3 + y * 5) % 4);
+        wallFace(ctx, f.o, x, y, 1, WALL_H, c => c.drawImage(tex, 0, 0));
+      }
     }
 
     // topo da parede / da mureta
@@ -406,7 +491,7 @@ const WORLD = (() => {
         ctx.beginPath(); ctx.moveTo(v[0].x, v[0].y); ctx.lineTo(v[1].x, v[1].y); ctx.stroke();
         ctx.save();
         ctx.globalCompositeOperation = 'lighter';
-        ctx.strokeStyle = ISO.rgba(room.accent, pulso); ctx.lineWidth = 1.2;
+        ctx.strokeStyle = ISO.rgba(C.luz, pulso); ctx.lineWidth = 1.4;
         ctx.beginPath(); ctx.moveTo(v[0].x, v[0].y - 1); ctx.lineTo(v[1].x, v[1].y - 1); ctx.stroke();
         ctx.restore();
       }
@@ -445,12 +530,13 @@ const WORLD = (() => {
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
     if (d.o === 'h') {
-      ISO.quad(ctx, [P(x, y+1, h), P(x+1, y+1, h), P(x+1, y+1, h-3), P(x, y+1, h-3)], ISO.rgba(room.accent, .7));
+      ISO.quad(ctx, [P(x, y+1, h), P(x+1, y+1, h), P(x+1, y+1, h-3), P(x, y+1, h-3)], ISO.rgba(C.luz, .75));
     } else {
-      ISO.quad(ctx, [P(x+1, y, h), P(x+1, y+1, h), P(x+1, y+1, h-3), P(x+1, y, h-3)], ISO.rgba(room.accent, .7));
+      ISO.quad(ctx, [P(x+1, y, h), P(x+1, y+1, h), P(x+1, y+1, h-3), P(x+1, y, h-3)], ISO.rgba(C.luz, .75));
     }
     const c = ISO.toScreen(x + .5, y + .5, 20);
-    ISO.glow(ctx, c.x, c.y, 50, room.accent, .1 + .03 * Math.sin(t * 2));
+    ISO.glow(ctx, c.x, c.y, 56, C.luz, .14 + .03 * Math.sin(t * 2));
+    void room;
     ctx.restore();
   }
   /** a sala que uma porta atende (a do lado que não é corredor) */
@@ -515,11 +601,11 @@ const WORLD = (() => {
     }
   }
 
-  /* ---- a marca: img/logo.svg, ou o arquivo apontado em "logo" no config ---- */
-  const logoImg = new Image();
-  let logoOk = false;
-  logoImg.onload = () => { logoOk = true; };
-  logoImg.src = E.logo || 'img/logo.svg';
+  /* ---- a marca: img/logo-claro.png (versão para fundo escuro), ou o arquivo
+     apontado em "logo" no config; img/marca.png é só o símbolo da ovelha ---- */
+  const carrega = (src) => { const im = new Image(); im.ok = false; im.onload = () => { im.ok = true; }; im.src = src; return im; };
+  const logoGrande = carrega(E.logo || 'img/logo-claro.png');
+  const logoMini   = carrega('img/marca.png');
 
   function signLogo(c, len, rgbOn, mini) {
     // placa de aço escuro parafusada no concreto
@@ -530,7 +616,8 @@ const WORLD = (() => {
     for (const [px, py] of [[x0 + 5, y0 + 5], [x0 + w - 5, y0 + 5], [x0 + 5, y0 + h - 5], [x0 + w - 5, y0 + h - 5]]) {
       c.beginPath(); c.arc(px, py, 1.4, 0, 7); c.fill();
     }
-    if (logoOk) {
+    const logoImg = mini ? logoMini : logoGrande;
+    if (logoImg.ok) {
       const pad = mini ? 8 : 12;
       const bw = w - pad * 2, bh = h - pad * 2;
       const k = Math.min(bw / logoImg.width, bh / logoImg.height);

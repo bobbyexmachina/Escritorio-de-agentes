@@ -438,7 +438,7 @@ function frame(now) {
   // fundo
   if (!bgCache || bgCache.w !== cw || bgCache.h !== ch) {
     const g = ctx.createRadialGradient(cw / 2, ch * .42, 40, cw / 2, ch * .42, Math.max(cw, ch) * .8);
-    g.addColorStop(0, '#24262a'); g.addColorStop(.6, '#121315'); g.addColorStop(1, '#08090a');
+    g.addColorStop(0, '#1d1a33'); g.addColorStop(.6, '#0e0d1b'); g.addColorStop(1, '#06060c');
     bgCache = { g, w: cw, h: ch };
   }
   ctx.fillStyle = bgCache.g; ctx.fillRect(0, 0, cw, ch);

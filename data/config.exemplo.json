@@ -6,9 +6,9 @@
   "dono": "Bobby",
   "empresa": "Ovelha Rocks: produtora de vídeos institucionais e publicitários em live action, animação 2D, motion graphics e vídeos com Inteligência Artificial. Belo Horizonte/MG, 15 anos de mercado.",
   "porta": 4321,
-  "_logo": "logo: caminho da marca dentro de img/ (svg, png, jpg ou webp). cor: cor de destaque da marca, usada nas luzes e no topo.",
-  "logo": "img/logo.svg",
-  "cor": "#ff5a1f",
+  "_logo": "logo: a marca para fundo escuro, dentro de img/ (svg, png, jpg ou webp). cor: roxo da marca, usado no topo, nas placas e nos detalhes.",
+  "logo": "img/logo-claro.png",
+  "cor": "#7628f1",
 
   "reuniao": {
     "_leia": "automatica: false = só quando você clica em Reunir agora. Cada fala é uma chamada ao Claude e consome a cota do seu plano. dias: 0 = domingo ... 6 = sábado.",

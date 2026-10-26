@@ -27,9 +27,16 @@ seu departamento.
 
 ## A marca
 
-A logo fica em `img/logo.svg`. A que está lá é **provisória**: troque o arquivo
-pela logo oficial (ou coloque `logo.png` em `img/` e aponte `"logo"` em
-`data/config.json`). A cor de destaque vem de `"cor"` no mesmo arquivo.
+A marca da Ovelha Rocks fica em `img/`:
+
+- `logo.png`: a logo original (texto azul-marinho, para fundo claro);
+- `logo-claro.png`: a mesma logo com o texto claro, usada no topo da tela e na
+  placa da Diretoria;
+- `marca.png`: só o símbolo da ovelha, usado no ícone da aba e na placa da
+  sala de reuniões.
+
+`"logo"` e `"cor"` em `data/config.json` trocam a logo das placas e o roxo dos
+detalhes. A luz do andar é âmbar, como no modelo de escritório de referência.
 
 ## Começar
 
@@ -146,7 +153,7 @@ server.js          servidor: arquivos da tela, API, sobe/vigia sistemas, espelho
 reuniao.js         reunião dos agentes (Claude Code em cada pasta)
 avisos.js          ntfy e CallMeBot
 index.html         a tela
-img/               a marca (logo.svg)
+img/               a marca (logo, logo clara e símbolo)
 js/                motor isométrico, salas, móveis, bonecos, painéis
 css/style.css      tema
 exemplo-agente/    o menor sistema que o escritório sabe operar
