@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 160" width="520" height="160">
+  <!-- Marca provisória da Ovelha Rocks. Troque este arquivo pela logo oficial
+       (ou aponte "logo" em data/config.json para outro arquivo dentro de img/). -->
+  <g transform="translate(18 18)">
+    <g fill="#f3f2ee">
+      <circle cx="62" cy="64" r="34"/><circle cx="34" cy="70" r="26"/><circle cx="92" cy="70" r="26"/>
+      <circle cx="46" cy="40" r="25"/><circle cx="80" cy="40" r="25"/><circle cx="62" cy="90" r="24"/>
+    </g>
+    <rect x="38" y="104" width="9" height="20" fill="#f3f2ee"/><rect x="78" y="104" width="9" height="20" fill="#f3f2ee"/>
+    <ellipse cx="114" cy="50" rx="20" ry="16" fill="#151515" transform="rotate(20 114 50)"/>
+    <ellipse cx="100" cy="34" rx="11" ry="5" fill="#151515" transform="rotate(-30 100 34)"/>
+    <rect x="102" y="44" width="26" height="7" rx="1.5" fill="#ff5a1f"/>
+  </g>
+  <text x="180" y="78" font-family="Arial Black, Helvetica, Arial, sans-serif" font-weight="900" font-size="52" letter-spacing="4" fill="#f3f2ee">OVELHA</text>
+  <text x="182" y="124" font-family="Arial Black, Helvetica, Arial, sans-serif" font-weight="900" font-size="38" letter-spacing="15" fill="#ff5a1f">ROCKS</text>
+</svg>

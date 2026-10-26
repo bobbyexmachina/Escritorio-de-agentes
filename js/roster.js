@@ -12,11 +12,11 @@ const ROSTER = (() => {
      =========================================================== */
   const BOSSES = [
     {
-      id: 'boss-1', name: (window.ESCRITORIO && ESCRITORIO.dono) || 'Você', role: 'Dono · Diretoria',
+      id: 'boss-1', name: (window.ESCRITORIO && ESCRITORIO.dono) || 'Bobby', role: 'Sócio administrador · Diretoria',
       emoji: '⭐', boss: true, dept: 'diretoria', slotId: 'DIR-1',
       status: 'trabalhando', locked: true,
       source: 'Diretoria', sistema: null,
-      brief: 'Quem manda aqui. Sempre em serviço.',
+      brief: 'Sócio administrador da produtora. Sempre em serviço.',
       look: {
         skin: '#d9a17a', hair: '#2a1d14', style: 'curto',
         shirt: '#334155', pants: '#1e293b', shoes: '#15181f',
@@ -34,52 +34,76 @@ const ROSTER = (() => {
   const CATALOG = [
     {
       key: 'exemplo', name: 'EXEMPLO', role: 'Agente de demonstração', emoji: '🤖',
-      cat: 'detectado', system: 'Agente de exemplo', sistema: 'exemplo',
+      cat: 'detectado', system: 'Agente de exemplo', sistema: 'exemplo', dept: 'funcionarios',
       desc: 'Um sistema mínimo que vem junto, na pasta exemplo-agente: sobe na porta 4401 e mostra uma página.',
       why: 'Serve de molde. Clique no computador dele para ver o escritório ligar, embutir e conversar com um sistema. Depois cadastre os seus.',
       look: { skin: '#c9854f', hair: '#140f0c', style: 'cacheado', shirt: '#38bdf8', pants: '#26304a', glasses: null, beard: null }
     },
     {
-      key: 'sdr', name: 'Léo', role: 'Prospecção & SDR', emoji: '🎯', cat: 'sugerido',
-      desc: 'Encontra clientes em potencial, qualifica e prepara a primeira abordagem.',
-      why: 'É o topo do funil: sem entrada de oportunidade nova, o resto da equipe fica sem trabalho.',
-      look: { skin: '#f0c29b', hair: '#241a13', style: 'fade', shirt: '#6366f1', pants: '#1b2030', glasses: null, beard: 'cavanhaque' }
+      key: 'editor', name: 'Theo', role: 'Edição de vídeo', emoji: '🎬', cat: 'sugerido', dept: 'edicao',
+      desc: 'Organiza o material bruto, monta o primeiro corte e prepara as versões para cada rede.',
+      why: 'Edição é onde o projeto ganha ritmo. Um agente que adianta decupagem e versões libera o editor para o que importa.',
+      look: { skin: '#f0c29b', hair: '#241a13', style: 'fade', shirt: '#1f2937', pants: '#111827', glasses: null, beard: 'cavanhaque' }
     },
     {
-      key: 'atendimento', name: 'Bia', role: 'Atendimento & Suporte', emoji: '🎧', cat: 'sugerido',
-      desc: 'Responde dúvidas, resolve problemas e encaminha o que precisa de gente.',
-      why: 'Resposta rápida segura cliente. Um agente de primeira linha tira o volume repetitivo de você.',
-      look: { skin: '#7a4a2c', hair: '#140f0c', style: 'coque', shirt: '#14b8a6', pants: '#1b2030', glasses: 'redondo', beard: null }
+      key: 'colorista', name: 'Lia', role: 'Correção de cor', emoji: '🎨', cat: 'sugerido', dept: 'cor',
+      desc: 'Confere padrões de cor, gera LUTs de referência e checa consistência entre planos.',
+      why: 'Cor consistente é o que separa vídeo amador de vídeo institucional. Um checklist automático evita retrabalho.',
+      look: { skin: '#7a4a2c', hair: '#140f0c', style: 'coque', shirt: '#6b21a8', pants: '#1b2030', glasses: 'redondo', beard: null }
     },
     {
-      key: 'conteudo', name: 'Nico', role: 'Conteúdo & Redes Sociais', emoji: '📱', cat: 'sugerido',
-      desc: 'Planeja o calendário, escreve legendas e acompanha o que funcionou.',
-      why: 'Constância nas redes custa tempo. Com pauta e rascunho prontos, você só aprova.',
-      look: { skin: '#e0a878', hair: '#5a3a22', style: 'longo', shirt: '#f472b6', pants: '#26304a', glasses: null, beard: null }
+      key: 'animador', name: 'Gabi', role: 'Animação 2D', emoji: '✏️', cat: 'sugerido', dept: 'animacao',
+      desc: 'Prepara storyboards, animatics e lista de cenas para os animadores.',
+      why: 'Planejamento de animação bem feito corta semanas de produção.',
+      look: { skin: '#e0a878', hair: '#5a3a22', style: 'longo', shirt: '#f59e0b', pants: '#26304a', glasses: null, beard: null }
     },
     {
-      key: 'copy', name: 'Duda', role: 'Copywriter', emoji: '✍️', cat: 'sugerido',
-      desc: 'Escreve anúncios, páginas e e-mails e testa variações.',
-      why: 'Texto é o que converte. Ter variações prontas acelera qualquer teste.',
-      look: { skin: '#f7d7bd', hair: '#8b5a2b', style: 'curto', shirt: '#f59e0b', pants: '#1b2030', glasses: 'retangular', beard: null }
+      key: 'motion', name: 'Caio', role: 'Motion graphics', emoji: '🌀', cat: 'sugerido', dept: 'animacao',
+      desc: 'Monta templates de lettering, vinhetas e lower thirds a partir da marca do cliente.',
+      why: 'Peças de motion se repetem muito. Template bom é entrega mais rápida em todo projeto.',
+      look: { skin: '#f7d7bd', hair: '#8b5a2b', style: 'curto', shirt: '#0ea5e9', pants: '#1b2030', glasses: 'retangular', beard: null }
     },
     {
-      key: 'financeiro', name: 'Rafa', role: 'Financeiro', emoji: '🧾', cat: 'sugerido',
-      desc: 'Acompanha entradas, saídas e o caixa, e avisa quando algo foge do previsto.',
-      why: 'Número do caixa em dia evita surpresa e mostra o que dá para investir.',
+      key: 'ia', name: 'Nina', role: 'Criação com IA', emoji: '🧠', cat: 'sugerido', dept: 'ia',
+      desc: 'Escreve prompts, gera imagens e cenas com IA e organiza as versões aprovadas.',
+      why: 'Vídeo com IA é a frente mais nova da produtora. Um agente dedicado mantém o padrão de qualidade entre projetos.',
+      look: { skin: '#c9854f', hair: '#1a120d', style: 'cacheado', shirt: '#14b8a6', pants: '#1b2030', glasses: null, beard: null }
+    },
+    {
+      key: 'roteiro', name: 'Juca', role: 'Roteiro & Criação', emoji: '📝', cat: 'sugerido', dept: 'funcionarios',
+      desc: 'Transforma o briefing do cliente em conceito, roteiro e decupagem técnica.',
+      why: 'Todo vídeo começa no papel. Roteiro rápido e bem estruturado acelera a aprovação.',
+      look: { skin: '#f0c29b', hair: '#140f0c', style: 'curto', shirt: '#e5e7eb', pants: '#1f2937', glasses: 'retangular', beard: 'cheia' }
+    },
+    {
+      key: 'comercial', name: 'Léo', role: 'Comercial & Orçamentos', emoji: '🎯', cat: 'sugerido', dept: 'vendas',
+      desc: 'Encontra empresas que precisam de vídeo, qualifica e monta a primeira proposta.',
+      why: 'É o topo do funil: sem projeto novo entrando, o resto do estúdio fica parado.',
+      look: { skin: '#f0c29b', hair: '#241a13', style: 'fade', shirt: '#f97316', pants: '#1b2030', glasses: null, beard: 'cavanhaque' }
+    },
+    {
+      key: 'social', name: 'Duda', role: 'Social Media', emoji: '📱', cat: 'sugerido', dept: 'marketing',
+      desc: 'Planeja o calendário da Ovelha Rocks, recorta o showreel para as redes e escreve as legendas.',
+      why: 'Produtora que não mostra o próprio trabalho perde cliente. Constância nas redes custa tempo.',
+      look: { skin: '#f7d7bd', hair: '#8b5a2b', style: 'longo', shirt: '#f472b6', pants: '#1b2030', glasses: null, beard: null }
+    },
+    {
+      key: 'financeiro', name: 'Rafa', role: 'Financeiro', emoji: '🧾', cat: 'sugerido', dept: 'financeiro',
+      desc: 'Acompanha entradas, saídas, notas e o caixa por projeto, e avisa quando algo foge do previsto.',
+      why: 'Saber a margem real de cada vídeo mostra o que vale a pena vender mais.',
       look: { skin: '#c9854f', hair: '#1a120d', style: 'curto', shirt: '#22c55e', pants: '#26304a', glasses: 'retangular', beard: 'cheia' }
     },
     {
-      key: 'dados', name: 'Cami', role: 'Dados & Relatórios', emoji: '🧮', cat: 'sugerido',
-      desc: 'Junta os números dos outros sistemas num painel e explica o que mudou.',
-      why: 'Com vários agentes trabalhando, alguém precisa olhar o todo e dizer o que está funcionando.',
-      look: { skin: '#f0c29b', hair: '#140f0c', style: 'longo', shirt: '#8b5cf6', pants: '#1b2030', glasses: 'redondo', beard: null }
+      key: 'inovacao', name: 'Cami', role: 'Pesquisa & Inovação', emoji: '🧪', cat: 'sugerido', dept: 'inovacao',
+      desc: 'Testa ferramentas novas de vídeo e IA e traz o que dá para usar já no próximo projeto.',
+      why: 'O mercado muda todo mês. Alguém precisa testar antes para o estúdio não ficar para trás.',
+      look: { skin: '#f0c29b', hair: '#140f0c', style: 'longo', shirt: '#84cc16', pants: '#1b2030', glasses: 'redondo', beard: null }
     },
     {
-      key: 'qa', name: 'Dan', role: 'QA de Sistemas', emoji: '🧪', cat: 'sugerido',
-      desc: 'Roda build, typecheck e teste antes de qualquer deploy dos outros agentes.',
-      why: 'Com vários agentes mexendo em código, alguém precisa ser o freio antes de subir para produção.',
-      look: { skin: '#f7d7bd', hair: '#8e8e93', style: 'curto', shirt: '#0ea5e9', pants: '#26304a', glasses: 'redondo', beard: null }
+      key: 'producao', name: 'Bia', role: 'Produção & Atendimento', emoji: '🎧', cat: 'sugerido', dept: 'funcionarios',
+      desc: 'Cuida do cronograma, das diárias de filmagem, da equipe e do contato com o cliente.',
+      why: 'Produção organizada é filmagem sem imprevisto e cliente tranquilo.',
+      look: { skin: '#7a4a2c', hair: '#140f0c', style: 'coque', shirt: '#64748b', pants: '#1b2030', glasses: null, beard: null }
     }
   ];
 
@@ -109,7 +133,7 @@ const ROSTER = (() => {
       sistema: c.sistema || null,
       path: c.path || null,
       brief: c.desc,
-      dept: 'servico',
+      dept: c.dept || 'funcionarios',
       slotId: null,
       status: 'trabalhando',
       boss: false,
@@ -204,7 +228,7 @@ const ROSTER = (() => {
       system: data.system || null, path: data.path || null,
       sistema: data.sistema || null, reuniao: data.reuniao !== false,
       brief: data.brief || '',
-      dept: 'servico', slotId: null, status: 'trabalhando',
+      dept: data.dept || 'funcionarios', slotId: null, status: 'trabalhando',
       boss: false, locked: false, custom: true,
       look: AVATAR.makeLook(key, data.look || {})
     };

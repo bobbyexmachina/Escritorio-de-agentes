@@ -1,15 +1,35 @@
-# Escritório de Agentes
+# Escritório Ovelha Rocks
 
-Um escritório isométrico no navegador, estilo Habbo, para acompanhar e operar
-os seus agentes de IA. Cada agente é um boneco com mesa e computador próprios;
-clicar no computador dele abre o **sistema daquele agente** ali dentro, com
-botões para ligar, desligar, ver o log e conversar com ele pelo Claude Code.
+O escritório isométrico, estilo Habbo, da **Ovelha Rocks**: produtora de vídeos
+institucionais e publicitários em live action, animação 2D, motion graphics e
+vídeos com Inteligência Artificial (Belo Horizonte/MG, 15 anos de mercado).
 
-- Diretoria, sala de serviço com 18 estações, lounge, sala de reunião e recepção.
-- Os bonecos trabalham na própria mesa, descansam no lounge no horário que você
-  definir e se juntam na sala de reunião quando há reunião.
-- O escritório sobe os sistemas locais, vigia quem caiu e religa sozinho.
-- Nenhuma dependência: só Node.js.
+Cada agente de IA é um boneco com mesa e computador próprios; clicar no
+computador dele abre o **sistema daquele agente** ali dentro, com botões para
+ligar, desligar, ver o log e conversar com ele pelo Claude Code.
+
+## O andar
+
+Um andar inteiro de prédio em concreto aparente (fôrma de tábua, furos de
+tirante), divisórias de mureta com vidro e uma linha de luz da cor de cada sala.
+
+| Faixa | Salas |
+| --- | --- |
+| Fundo | Diretoria · Sala de reuniões · Sala de exibição (cinema) · Estúdio de IA |
+| Meio | Financeiro · Vendas · Marketing · hall · Sala dos funcionários |
+| Frente | Inovação · Animação 2D & Motion · Edição · Correção de cor · Sala de jogos |
+
+Corredores com recepção, elevador e a ovelha de óculos. Cada departamento tem
+as próprias estações, e a tela de quem está trabalhando mostra o trabalho da
+sala: timeline na edição, rodas de cor na correção, quadros-chave na animação,
+imagens sendo geradas no estúdio de IA. Quem é contratado senta numa mesa do
+seu departamento.
+
+## A marca
+
+A logo fica em `img/logo.svg`. A que está lá é **provisória**: troque o arquivo
+pela logo oficial (ou coloque `logo.png` em `img/` e aponte `"logo"` em
+`data/config.json`). A cor de destaque vem de `"cor"` no mesmo arquivo.
 
 ## Começar
 
@@ -82,6 +102,7 @@ reunião, use `data/config.json` (veja abaixo).
 Copie `data/config.exemplo.json` para `data/config.json` e ajuste:
 
 - `nome`, `subtitulo`: o topo da tela e o letreiro das paredes.
+- `logo`, `cor`: a marca nas paredes e no topo, e a cor das luzes.
 - `dono`: o seu nome no boneco da Diretoria.
 - `empresa`: uma frase sobre o negócio, que vira contexto na reunião.
 - `porta`: a porta do escritório (padrão 4321).
@@ -125,6 +146,7 @@ server.js          servidor: arquivos da tela, API, sobe/vigia sistemas, espelho
 reuniao.js         reunião dos agentes (Claude Code em cada pasta)
 avisos.js          ntfy e CallMeBot
 index.html         a tela
+img/               a marca (logo.svg)
 js/                motor isométrico, salas, móveis, bonecos, painéis
 css/style.css      tema
 exemplo-agente/    o menor sistema que o escritório sabe operar

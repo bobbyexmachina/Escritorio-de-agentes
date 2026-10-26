@@ -23,8 +23,9 @@ const ROOT = __dirname;
    padrão abaixo; o modelo comentado está em data/config.exemplo.json. */
 const CONFIG_ARQ = path.join(ROOT, 'data', 'config.json');
 const CONFIG_PADRAO = {
-  nome: 'Escritório de Agentes', subtitulo: 'painel dos seus agentes de IA',
-  dono: 'Você', empresa: '', porta: 4321,
+  nome: 'Ovelha Rocks', subtitulo: 'produtora de vídeo · Belo Horizonte',
+  dono: 'Bobby', porta: 4321, cor: '#ff5a1f', logo: 'img/logo.svg',
+  empresa: 'Ovelha Rocks: produtora de vídeos institucionais e publicitários em live action, animação 2D, motion graphics e vídeos com Inteligência Artificial. Belo Horizonte/MG, 15 anos de mercado.',
   reuniao: { automatica: false, dias: [1, 5], hora: 11, minuto: 0, duracaoMin: 30, modelo: 'sonnet',
              foco: '', meta: { descricao: '', alvo: 0, feito: 0, unidade: 'resultados', ate: '' } }
 };
@@ -54,6 +55,8 @@ const TYPES = {
   '.svg':  'image/svg+xml',
   '.png':  'image/png',
   '.jpg':  'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webp': 'image/webp',
   '.ico':  'image/x-icon'
 };
 
@@ -691,7 +694,7 @@ const servidor = http.createServer(async (req, res) => {
   /* configuração pública para a tela: nome, dono, reunião (sem segredo) */
   if (rota === '/config.js') {
     const c = lerConfig();
-    const pub = { nome: c.nome, subtitulo: c.subtitulo, dono: c.dono, empresa: c.empresa };
+    const pub = { nome: c.nome, subtitulo: c.subtitulo, dono: c.dono, empresa: c.empresa, cor: c.cor, logo: c.logo };
     res.writeHead(200, { 'Content-Type': 'text/javascript; charset=utf-8', 'Cache-Control': 'no-store' });
     res.end('window.ESCRITORIO = ' + JSON.stringify(pub) + ';\n');
     return;
@@ -835,7 +838,7 @@ const servidor = http.createServer(async (req, res) => {
 
   /* ---- estáticos ---- */
   const rel = rota === '/' ? '/index.html' : rota;
-  if (!/^\/(index\.html|favicon\.svg|css\/|js\/)/.test(rel)) {
+  if (!/^\/(index\.html|favicon\.svg|css\/|js\/|img\/)/.test(rel)) {
     res.writeHead(404, { 'Content-Type': 'text/plain' }).end('404'); return;
   }
   const arquivo = path.join(ROOT, path.normalize(rel).replace(/^(\.\.[/\\])+/, ''));

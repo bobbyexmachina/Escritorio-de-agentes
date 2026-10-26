@@ -195,9 +195,9 @@ class Actor {
   }
 
   wander() {
-    const room = this.a.status === 'descanso' ? WORLD.ROOMS.lounge
+    const room = this.a.status === 'descanso' ? WORLD.ROOMS.jogos
                : this.a.status === 'reuniao'  ? WORLD.ROOMS.reuniao
-               : WORLD.ROOMS.servico;
+               : WORLD.ROOMS[(this.slot && this.slot.room) || 'funcionarios'] || WORLD.ROOMS.funcionarios;
     for (let i = 0; i < 14; i++) {
       const x = room.x1 + Math.floor(Math.random() * (room.x2 - room.x1));
       const y = room.y1 + Math.floor(Math.random() * (room.y2 - room.y1));
@@ -351,7 +351,9 @@ function garanteEstacao() {
     if (ag.boss) { if (ag.slotId) tomadas.add(ag.slotId); continue; }
     const valida = ag.slotId && mesas.some(m => m.id === ag.slotId) && !tomadas.has(ag.slotId);
     if (valida) { tomadas.add(ag.slotId); continue; }
-    const livre = mesas.find(m => !tomadas.has(m.id));
+    // primeiro uma mesa livre no departamento dele; se não houver, qualquer uma
+    const livre = mesas.find(m => !tomadas.has(m.id) && m.room === ag.dept) ||
+                  mesas.find(m => !tomadas.has(m.id));
     ag.slotId = livre ? livre.id : null;
     if (livre) tomadas.add(livre.id);
     mudou = true;
@@ -436,7 +438,7 @@ function frame(now) {
   // fundo
   if (!bgCache || bgCache.w !== cw || bgCache.h !== ch) {
     const g = ctx.createRadialGradient(cw / 2, ch * .42, 40, cw / 2, ch * .42, Math.max(cw, ch) * .8);
-    g.addColorStop(0, '#141a2e'); g.addColorStop(.6, '#090b13'); g.addColorStop(1, '#05060a');
+    g.addColorStop(0, '#24262a'); g.addColorStop(.6, '#121315'); g.addColorStop(1, '#08090a');
     bgCache = { g, w: cw, h: ch };
   }
   ctx.fillStyle = bgCache.g; ctx.fillRect(0, 0, cw, ch);
@@ -462,7 +464,8 @@ function frame(now) {
     let k = ac.x + ac.y + 0.5;
     // sentado: desenha por cima do próprio móvel, senão a cadeira e o
     // monitor tapam o boneco (é o mesmo truque do Habbo)
-    if (ac.seated && ac.slot && ac.slot.obj && SIT_OVER.has(ac.slot.obj.t))
+    // (sofá com o encosto virado para nós é o contrário: ele tapa o boneco)
+    if (ac.seated && ac.slot && ac.slot.obj && SIT_OVER.has(ac.slot.obj.t) && ac.slot.obj.dir !== 's')
       k = Math.max(k, FURN.depth(ac.slot.obj) + 0.02);
     const pa = ISO.toScreen(ac.x, ac.y);
     dyn.push({ k, t: 'actor', ac,
@@ -667,12 +670,11 @@ function renderHire() {
 function renderRooms() {
   const box = $('#rooms-list');
   box.innerHTML = '';
-  const order = ['diretoria', 'servico', 'lounge', 'reuniao', 'corredor'];
-  for (const id of order) {
+  for (const id of WORLD.ORDEM) {
     const r = WORLD.ROOMS[id];
     const inside = Array.from(actors.values()).filter(ac =>
       !ac.hidden && WORLD.roomAt(Math.round(ac.x), Math.round(ac.y)) === id);
-    const cap = id === 'servico' ? 18 : id === 'diretoria' ? 2 : id === 'reuniao' ? 8 : id === 'lounge' ? FURN.restSlots.length : 0;
+    const cap = lugares(id);
     const pct = cap ? Math.min(100, inside.length / cap * 100) : 0;
     const el = document.createElement('div');
     el.className = 'roomcard';
@@ -682,11 +684,18 @@ function renderRooms() {
       <div class="rmeta" style="color:${r.accent}">${inside.length} pessoa(s) agora${cap ? ` · ${cap} lugares` : ''}</div>
       ${cap ? `<div class="bar"><i style="width:${pct}%;background:${r.accent}"></i></div>` : ''}`;
     el.addEventListener('click', () => {
-      if (id === 'corredor') focusTile(24, 20, 0.7);
+      if (id === 'corredor') focusTile(WORLD.SPAWN.x - 8, WORLD.SPAWN.y, 0.7);
       else focusTile((r.x1 + r.x2) / 2, (r.y1 + r.y2) / 2, 0.7);
     });
     box.appendChild(el);
   }
+}
+
+/** quantos lugares a sala tem: mesas, cadeiras de reunião ou de descanso */
+function lugares(id) {
+  const naSala = s => WORLD.roomAt(Math.floor(s.x), Math.floor(s.y)) === id;
+  if (id === 'reuniao') return FURN.meetSlots.length;
+  return FURN.workSlots.filter(s => s.room === id).length || FURN.restSlots.filter(naSala).length;
 }
 
 function renderStats() {
@@ -694,7 +703,7 @@ function renderStats() {
   $('#st-idle').textContent = ROSTER.count('descanso');
   $('#st-off').textContent  = ROSTER.count('offline');
   const leg = $('#roomlegend');
-  leg.innerHTML = ['diretoria', 'servico', 'lounge', 'reuniao'].map(id => {
+  leg.innerHTML = WORLD.ORDEM.filter(id => id !== 'corredor').map(id => {
     const r = WORLD.ROOMS[id];
     const n = Array.from(actors.values()).filter(ac =>
       !ac.hidden && WORLD.roomAt(Math.round(ac.x), Math.round(ac.y)) === id).length;
@@ -1522,6 +1531,8 @@ document.addEventListener('keydown', e => {
   const E = window.ESCRITORIO || {};
   if (E.nome) { document.title = E.nome; $('#brand-nome').textContent = E.nome.toUpperCase(); }
   if (E.subtitulo !== undefined) $('#brand-sub').textContent = E.subtitulo;
+  if (E.logo) $('#brand-logo').src = E.logo;
+  if (E.cor) document.documentElement.style.setProperty('--acc-1', E.cor);
 })();
 SISTEMAS.atualizar();
 setInterval(() => SISTEMAS.atualizar(), 15000);
