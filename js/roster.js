@@ -110,7 +110,8 @@ const ROSTER = (() => {
       look: { skin: '#f0c29b', hair: '#140f0c', style: 'longo', shirt: '#84cc16', pants: '#1b2030', glasses: 'redondo', beard: null }
     },
     {
-      key: 'producao', name: 'Bia', role: 'Produção & Atendimento', emoji: '🎧', cat: 'sugerido', dept: 'funcionarios',
+      key: 'producao', name: 'Bia', role: 'Atendimento & Sucesso', emoji: '🎧', cat: 'detectado', dept: 'funcionarios',
+      system: 'Atendimento & Sucesso', sistema: 'bia',
       desc: 'Cuida do cronograma, das diárias de filmagem, da equipe e do contato com o cliente.',
       why: 'Produção organizada é filmagem sem imprevisto e cliente tranquilo.',
       look: { skin: '#7a4a2c', hair: '#140f0c', style: 'coque', shirt: '#64748b', pants: '#1b2030', glasses: null, beard: null }

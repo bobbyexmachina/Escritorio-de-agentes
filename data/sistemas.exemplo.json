@@ -111,5 +111,26 @@
       "Cada conteúdo do calendário precisa de um objetivo",
       "Resultados de teste só com número real da plataforma"
     ]
+  },
+  "bia": {
+    "nome": "Bia · Atendimento & Sucesso",
+    "tipo": "local",
+    "pasta": "agentes/bia",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4414"
+    },
+    "porta": 4414,
+    "abre": "/",
+    "sobre": "Atendimento da Ovelha Rocks: triagem de mensagens (assunto, urgência, sentimento, risco), casos no formato padrão, escalonamento, base de conhecimento só com respostas confirmadas, roteiros de sucesso do cliente e feedback por tema. Não envia mensagem nem executa reembolso, cancelamento ou alteração. Dados em agentes/bia/data/atendimento.json.",
+    "dicas": [
+      "Comece pela Configuração: ela pergunta só o que falta",
+      "Em Novo caso, cole a mensagem e clique em Triar",
+      "Só respostas confirmadas na base entram nas sugestões",
+      "Feedback agrupa reclamações por tema para mostrar gargalos"
+    ]
   }
 }

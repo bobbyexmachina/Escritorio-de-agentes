@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bia · Atendimento & Sucesso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topo">
+  <div class="quem">
+    <div class="foto" aria-hidden="true">BI</div>
+    <div><strong>Bia</strong><span>Atendimento &amp; Sucesso</span></div>
+  </div>
+  <nav class="abas" id="abas">
+    <button data-aba="fila" class="on">Fila</button>
+    <button data-aba="novo">Novo caso</button>
+    <button data-aba="base">Base de conhecimento</button>
+    <button data-aba="sucesso">Sucesso do cliente</button>
+    <button data-aba="feedback">Feedback</button>
+    <button data-aba="config">Configuração</button>
+  </nav>
+</header>
+
+<p class="aviso">Só respondo com política, prazo, preço ou condição confirmados na base de conhecimento — o resto vira pergunta ou vai para uma pessoa. Nada daqui envia mensagem, reembolsa, cancela ou altera pedido. Nunca peça senha, código ou número completo de cartão.</p>
+
+<main>
+  <section class="aba on" id="aba-fila">
+    <div id="boasvindas"></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grade2">
+      <div class="bloco"><h2>Casos abertos</h2><div id="fila"></div></div>
+      <div class="bloco"><h2>Alertas</h2><div id="alertas"></div></div>
+    </div>
+    <div class="bloco"><h2>Resolvidos</h2><div id="resolvidos"></div></div>
+  </section>
+
+  <section class="aba" id="aba-novo">
+    <div class="bloco">
+      <h2>1 · Cole a mensagem do cliente</h2>
+      <form id="f-triar" class="formacao">
+        <label><span>Cliente (só o necessário)</span><input name="cliente" placeholder="nome ou empresa"></label>
+        <label><span>Canal</span><input name="canal" placeholder="WhatsApp, e-mail, Instagram…"></label>
+        <label class="largo"><span>Mensagem</span><textarea name="mensagem" rows="4" required></textarea></label>
+        <div class="acoes largo"><button class="btn prim">Triar</button><span class="dim">A triagem é uma sugestão: confira e ajuste antes de salvar.</span></div>
+      </form>
+    </div>
+    <div class="bloco" id="caso-bloco" hidden>
+      <h2>2 · Caso no formato padrão</h2>
+      <div id="triagem" class="tags"></div>
+      <form id="f-caso" class="formacao">
+        <label><span>Categoria</span><select name="categoria"></select></label>
+        <label><span>Prioridade</span><select name="prioridade"><option>baixa</option><option>média</option><option>alta</option><option>crítica</option></select></label>
+        <label><span>Sentimento</span><select name="sentimento"><option>positivo</option><option>neutro</option><option>negativo</option></select></label>
+        <label><span>Tema (para o feedback)</span><input name="tema" placeholder="ex.: prazo de revisão"></label>
+        <label class="largo"><span>Resumo interno</span><input name="resumo" placeholder="o pedido real, em uma frase"></label>
+        <label class="largo2"><span>Histórico disponível</span><input name="historico"></label>
+        <label class="largo2"><span>Dados que faltam</span><input name="faltam"></label>
+        <label class="largo"><span>Resposta ao cliente</span><textarea name="resposta" rows="5"></textarea></label>
+        <div class="largo" id="conferencia"></div>
+        <label class="largo2"><span>Ação necessária</span><input name="acao"></label>
+        <label><span>Precisa de humano?</span><select name="precisaHumano"><option value="true">Sim</option><option value="false">Não</option></select></label>
+        <label><span>Status</span><select name="status"><option>aberto</option><option>aguardando cliente</option><option>escalado</option><option>resolvido</option></select></label>
+        <label class="largo"><span>Motivo</span><input name="motivo"></label>
+        <div class="acoes largo"><button class="btn prim">Salvar caso</button><button class="btn" type="button" data-copiar-campo="resposta">Copiar resposta</button></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="aba" id="aba-base">
+    <div class="bloco">
+      <h2>Nova resposta-padrão</h2>
+      <form id="f-faq" class="formacao">
+        <label class="largo"><span>Pergunta</span><input name="pergunta" required></label>
+        <label class="largo"><span>Resposta (só regra oficial)</span><textarea name="resposta" rows="3" required></textarea></label>
+        <label class="largo2"><span>Fonte (política, contrato, documento)</span><input name="fonte"></label>
+        <label><span>Tema</span><input name="tema"></label>
+        <label><span>Palavras-chave extras</span><input name="palavras"></label>
+        <label class="largo chk"><input type="checkbox" name="confirmada" value="1"> Confirmo que esta resposta segue a política oficial</label>
+        <div class="acoes largo"><button class="btn prim">Adicionar</button></div>
+      </form>
+      <p class="dim">Só respostas <b>confirmadas</b> entram nas sugestões da triagem.</p>
+    </div>
+    <div class="bloco"><h2>Sugestões a partir dos casos</h2><div id="sugestoes"></div></div>
+    <div class="bloco"><h2>Base de conhecimento</h2><div id="faq"></div></div>
+  </section>
+
+  <section class="aba" id="aba-sucesso">
+    <div class="bloco">
+      <h2>Roteiro de sucesso do cliente</h2>
+      <p class="dim">Depois da compra: onboarding, acompanhamento e prevenção de dúvidas, adaptados ao serviço. Mensagens são para você enviar.</p>
+      <form id="f-suc" class="formacao">
+        <label><span>Etapa</span><select name="etapa"><option value="onboarding">Onboarding</option><option value="acompanhamento">Acompanhamento</option><option value="prevencao">Prevenção de dúvidas</option></select></label>
+        <label><span>Serviço / produto</span><input name="produto" placeholder="ex.: vídeo institucional"></label>
+        <label><span>Quando</span><input name="quando" placeholder="ex.: no dia da aprovação"></label>
+        <label><span>Ação</span><input name="acao"></label>
+        <label class="largo"><span>Mensagem sugerida</span><textarea name="mensagem" rows="3"></textarea></label>
+        <div class="acoes largo"><button class="btn prim">Adicionar ao roteiro</button></div>
+      </form>
+    </div>
+    <div class="grade3" id="sucesso"></div>
+  </section>
+
+  <section class="aba" id="aba-feedback">
+    <div class="bloco"><h2>Reclamações e dúvidas por tema</h2><div class="tabela" id="temas"></div>
+      <p class="dim">Temas que se repetem mostram gargalos da operação. Leve os maiores para a Maya (Operações).</p></div>
+    <div class="bloco"><div class="cab"><h2>Resumo</h2><button class="btn" data-copiar="resumo">Copiar</button></div><article class="md" id="resumo"></article></div>
+  </section>
+
+  <section class="aba" id="aba-config">
+    <div class="bloco">
+      <h2>Onboarding do atendimento</h2>
+      <form id="f-emp" class="formgrid"></form>
+      <div class="acoes"><button class="btn prim" id="salvar-emp">Salvar</button></div>
+    </div>
+  </section>
+</main>
+
+<!-- ficha do caso -->
+<div class="gaveta" id="gaveta" hidden>
+  <div class="gaveta-corpo">
+    <div class="cab"><h2 id="g-titulo">Caso</h2><button class="x grande" id="g-fechar">✕</button></div>
+    <pre class="msg" id="g-msg"></pre>
+    <form id="f-edit" class="formacao"></form>
+  </div>
+</div>
+<div class="modal" id="confirma" hidden>
+  <div class="modal-card"><p id="c-texto"></p>
+    <div class="acoes"><button class="btn" id="c-nao">Cancelar</button><button class="btn prim" id="c-sim">Confirmar</button></div></div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
