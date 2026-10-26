@@ -90,7 +90,8 @@ const ROSTER = (() => {
       look: { skin: '#e0a878', hair: '#241a13', style: 'fade', shirt: '#1f2937', pants: '#111827', glasses: null, beard: 'cavanhaque' }
     },
     {
-      key: 'social', name: 'Duda', role: 'Social Media', emoji: '📱', cat: 'sugerido', dept: 'marketing',
+      key: 'social', name: 'Duda', role: 'Marketing & Conteúdo', emoji: '📱', cat: 'detectado', dept: 'marketing',
+      system: 'Marketing & Conteúdo', sistema: 'duda',
       desc: 'Planeja o calendário da Ovelha Rocks, recorta o showreel para as redes e escreve as legendas.',
       why: 'Produtora que não mostra o próprio trabalho perde cliente. Constância nas redes custa tempo.',
       look: { skin: '#f7d7bd', hair: '#8b5a2b', style: 'longo', shirt: '#f472b6', pants: '#1b2030', glasses: null, beard: null }

@@ -90,5 +90,26 @@
       "A aba Entrega mostra tudo no formato padrão, pronto para copiar",
       "Em Conversar, escreva DIAGNOSTICAR, PLANEJAR, EXECUTAR ou REVISAR"
     ]
+  },
+  "duda": {
+    "nome": "Duda · Marketing & Conteúdo",
+    "tipo": "local",
+    "pasta": "agentes/duda",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4413"
+    },
+    "porta": 4413,
+    "abre": "/",
+    "sobre": "Marketing da Ovelha Rocks: Mapa de Comunicação, posicionamento, pilares, funil, criativos por ângulo no padrão de anúncio, biblioteca de copy, calendário de conteúdo, testes e aprendizados. Alegações sensíveis ganham aviso para confirmar. Nada é publicado: tudo sai pronto para copiar. Dados em agentes/duda/data/marketing.json.",
+    "dicas": [
+      "Comece pelo Mapa de Comunicação: ela pergunta só o que falta",
+      "Criativos mostram o que falta no padrão de anúncio e os ângulos já usados",
+      "Cada conteúdo do calendário precisa de um objetivo",
+      "Resultados de teste só com número real da plataforma"
+    ]
   }
 }

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Duda · Marketing & Conteúdo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topo">
+  <div class="quem">
+    <div class="foto" aria-hidden="true">DU</div>
+    <div><strong>Duda</strong><span>Marketing &amp; Conteúdo</span></div>
+  </div>
+  <nav class="abas" id="abas">
+    <button data-aba="mapa" class="on">Mapa de Comunicação</button>
+    <button data-aba="posicionamento">Posicionamento &amp; Pilares</button>
+    <button data-aba="criativos">Criativos</button>
+    <button data-aba="calendario">Calendário</button>
+    <button data-aba="copy">Copy</button>
+    <button data-aba="testes">Testes &amp; Aprendizado</button>
+  </nav>
+</header>
+
+<p class="aviso">Sem depoimento, número, avaliação ou resultado inventado, e sem promessa de ganho garantido. Peça com alegação sensível ganha um aviso para você confirmar. Nada é publicado daqui: tudo sai pronto para copiar.</p>
+
+<main>
+  <!-- MAPA DE COMUNICAÇÃO -->
+  <section class="aba on" id="aba-mapa">
+    <div id="boasvindas"></div>
+    <div class="grade2">
+      <div class="bloco"><h2>Alertas</h2><div id="alertas"></div></div>
+      <div class="bloco"><h2>Funil</h2><div id="funil"></div></div>
+    </div>
+    <div class="bloco">
+      <h2>Base do Mapa de Comunicação</h2>
+      <form id="f-emp" class="formgrid"></form>
+      <div class="acoes"><button class="btn prim" id="salvar-emp">Salvar</button></div>
+    </div>
+    <div class="bloco">
+      <div class="cab"><h2>Mapa completo</h2><div class="acoes"><button class="btn" data-copiar="mapa">Copiar</button><a class="btn" id="baixar">Baixar .md</a></div></div>
+      <article class="md" id="mapa"></article>
+    </div>
+  </section>
+
+  <!-- POSICIONAMENTO & PILARES -->
+  <section class="aba" id="aba-posicionamento">
+    <div class="bloco">
+      <h2>Posicionamento</h2>
+      <form id="f-pos" class="formgrid">
+        <label><span>Proposta de valor</span><textarea name="propostaValor" rows="3"></textarea></label>
+        <label><span>Público</span><textarea name="publico" rows="3"></textarea></label>
+        <label><span>Problema</span><textarea name="problema" rows="3"></textarea></label>
+        <label><span>Mecanismo (como resolve)</span><textarea name="mecanismo" rows="3"></textarea></label>
+        <label><span>Diferenciais verdadeiros</span><textarea name="diferenciais" rows="3"></textarea></label>
+      </form>
+      <div class="acoes"><button class="btn prim" id="salvar-pos">Salvar posicionamento</button></div>
+    </div>
+    <div class="bloco">
+      <h2>Pilares de conteúdo <span class="cont">de 3 a 6</span></h2>
+      <form id="f-pilar" class="linha item4">
+        <input name="nome" placeholder="Tema central" required>
+        <input name="descricao" placeholder="O que entra neste pilar">
+        <input name="objetivo" placeholder="Para que serve no funil">
+        <button class="btn">Adicionar pilar</button>
+      </form>
+      <div id="pilares"></div>
+    </div>
+  </section>
+
+  <!-- CRIATIVOS -->
+  <section class="aba" id="aba-criativos">
+    <div class="bloco">
+      <h2>Novo criativo</h2>
+      <div class="angulos" id="angulos"></div>
+      <form id="f-cri" class="formacao">
+        <label><span>Ângulo</span><select name="angulo"></select></label>
+        <label><span>Formato</span><select name="formato"><option value="video">Anúncio em vídeo</option><option value="imagem">Anúncio de imagem</option></select></label>
+        <label><span>Etapa do funil</span><select name="etapa"></select></label>
+        <label><span>Nome interno</span><input name="titulo"></label>
+        <label class="largo so-video"><span>Hook (1 a 3 segundos)</span><input name="hook"></label>
+        <label class="largo so-video"><span>Prova / demonstração (real)</span><input name="prova"></label>
+        <label class="so-video"><span>Benefício específico</span><input name="beneficio"></label>
+        <label class="so-video"><span>Redução de objeção</span><input name="objecao"></label>
+        <label class="largo so-imagem"><span>Uma ideia principal</span><input name="ideia"></label>
+        <label class="so-imagem"><span>Texto na imagem (pouco)</span><input name="textoImagem"></label>
+        <label class="so-imagem"><span>Hierarquia (o que se lê primeiro)</span><input name="hierarquia"></label>
+        <label><span>CTA</span><input name="cta"></label>
+        <label class="largo"><span>Legenda (opcional)</span><textarea name="legenda" rows="2"></textarea></label>
+        <div class="acoes largo"><button class="btn prim">Criar criativo</button></div>
+      </form>
+    </div>
+    <div class="cards" id="criativos"></div>
+  </section>
+
+  <!-- CALENDÁRIO -->
+  <section class="aba" id="aba-calendario">
+    <div class="bloco">
+      <h2>Novo conteúdo</h2>
+      <form id="f-con" class="formacao">
+        <label><span>Data</span><input name="data" type="date"></label>
+        <label><span>Canal</span><input name="canal" placeholder="Instagram, LinkedIn, YouTube…"></label>
+        <label><span>Formato</span><input name="formato" placeholder="reels, carrossel, vídeo, artigo…"></label>
+        <label><span>Etapa do funil</span><select name="etapa"></select></label>
+        <label><span>Pilar</span><select name="pilar"></select></label>
+        <label class="largo"><span>Objetivo (por que este conteúdo existe)</span><input name="objetivo"></label>
+        <label><span>Público</span><input name="publico"></label>
+        <label><span>Assunto</span><input name="assunto"></label>
+        <label class="largo"><span>Gancho</span><input name="gancho"></label>
+        <label class="largo"><span>Roteiro / copy</span><textarea name="roteiro" rows="4"></textarea></label>
+        <label><span>CTA</span><input name="cta"></label>
+        <label><span>Material visual sugerido</span><input name="visual"></label>
+        <div class="acoes largo"><button class="btn prim">Adicionar ao calendário</button></div>
+      </form>
+    </div>
+    <div class="bloco"><h2>Calendário</h2><div id="calendario"></div></div>
+  </section>
+
+  <!-- COPY -->
+  <section class="aba" id="aba-copy">
+    <div class="bloco">
+      <h2>Biblioteca de copy</h2>
+      <form id="f-copy" class="formacao">
+        <label><span>Tipo</span><select name="tipo"><option value="hook">Hook</option><option value="headline">Headline</option><option value="corpo">Corpo</option><option value="cta">CTA</option><option value="legenda">Legenda</option><option value="pagina">Página</option><option value="email">E-mail</option></select></label>
+        <label class="largo3"><span>Para quê / onde</span><input name="contexto"></label>
+        <label class="largo"><span>Texto</span><textarea name="texto" rows="4" required></textarea></label>
+        <div class="acoes largo"><button class="btn prim">Guardar</button></div>
+      </form>
+    </div>
+    <div id="copys"></div>
+  </section>
+
+  <!-- TESTES & APRENDIZADO -->
+  <section class="aba" id="aba-testes">
+    <div class="bloco">
+      <h2>Novo teste</h2>
+      <form id="f-teste" class="formacao">
+        <label class="largo"><span>Hipótese</span><input name="hipotese" required placeholder="se mudarmos X, Y melhora porque…"></label>
+        <label><span>Variável testada</span><input name="variavel"></label>
+        <label><span>Criativo</span><input name="criativo"></label>
+        <label><span>Métrica</span><input name="metrica"></label>
+        <label><span>Início</span><input name="inicio" type="date"></label>
+        <div class="acoes largo"><button class="btn prim">Registrar teste</button></div>
+      </form>
+      <p class="dim">Resultado só com número real da plataforma. Sem métrica, o teste fica aberto.</p>
+    </div>
+    <div class="bloco"><h2>Testes</h2><div class="tabela" id="testes"></div></div>
+    <div class="bloco">
+      <h2>Aprendizados</h2>
+      <form id="f-apr" class="linha item4">
+        <input name="data" type="date">
+        <input name="texto" placeholder="O que aprendemos e o que muda na estratégia" required>
+        <select name="natureza"><option value="fato">FATO (resultado real)</option><option value="observacao">OBSERVAÇÃO</option><option value="hipotese">HIPÓTESE</option></select>
+        <button class="btn">Registrar</button>
+      </form>
+      <div id="aprendizados"></div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="confirma" hidden>
+  <div class="modal-card"><p id="c-texto"></p>
+    <div class="acoes"><button class="btn" id="c-nao">Cancelar</button><button class="btn prim" id="c-sim">Confirmar</button></div></div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>
