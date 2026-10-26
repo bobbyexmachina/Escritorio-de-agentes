@@ -69,5 +69,26 @@
       "Abra um lead para ver diagnóstico, mensagem sugerida e risco de perda",
       "Em Conversar, o Frederico lê o mesmo CRM e sugere canais e mensagens"
     ]
+  },
+  "maya": {
+    "nome": "Maya Albuquerque · Operações",
+    "tipo": "local",
+    "pasta": "agentes/maya",
+    "comando": "node",
+    "args": [
+      "server.js"
+    ],
+    "env": {
+      "PORT": "4412"
+    },
+    "porta": 4412,
+    "abre": "/",
+    "sobre": "Operação da Ovelha Rocks: Mapa da Operação, diagnóstico (fato, hipótese, recomendação), priorização por impacto, urgência, esforço e dependência, plano de ação com responsável, prazo, critério e métrica, SOPs, rotinas, revisão planejado x realizado e resumo executivo. Os dados ficam em agentes/maya/data/operacao.json.",
+    "dicas": [
+      "Comece pelo Mapa da Operação: ela pergunta só o que falta",
+      "Diagnosticar, Planejar, Executar e Revisar são os modos de trabalho dela",
+      "A aba Entrega mostra tudo no formato padrão, pronto para copiar",
+      "Em Conversar, escreva DIAGNOSTICAR, PLANEJAR, EXECUTAR ou REVISAR"
+    ]
   }
 }

@@ -766,14 +766,14 @@ const WORLD = (() => {
      Céu que muda de cor, horizonte, uma ovelha atravessando a cena e a
      legenda com timecode. Tudo vetorial, sem arquivo de vídeo.       */
   function corFilme(t) {
-    const cena = Math.floor(t / 7) % 4;
+    const cena = ((Math.floor(t / 7) % 4) + 4) % 4;
     return ['#ff8a4c', '#4cc9f0', '#c77dff', '#f9c74f'][cena];
   }
   function signCinema(c, len, t) {
     const x0 = 4, y0 = 6, w = len - 8, h = 96;
     // moldura preta da tela
     c.fillStyle = '#060606'; c.fillRect(x0 - 2, y0 - 2, w + 4, h + 4);
-    const cena = Math.floor(t / 7) % 4, tc = t % 7;
+    const cena = ((Math.floor(t / 7) % 4) + 4) % 4, tc = ((t % 7) + 7) % 7;
     const ceus = [
       ['#2b1640', '#ff8a4c'], ['#06243a', '#4cc9f0'], ['#160a2c', '#c77dff'], ['#3a2306', '#f9c74f']
     ][cena];

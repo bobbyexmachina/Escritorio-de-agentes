@@ -47,6 +47,7 @@ agente e segue o `CLAUDE.md` de lá (a persona e as regras dele).
 | Agente | Pasta | Porta | O que faz |
 | --- | --- | --- | --- |
 | Rosângela Maria · Financeiro & Performance | `agentes/rosangela` | 4410 | Caixa, resultado, margem, unit economics, orçamento, alertas, cenários e o relatório no formato padrão. Todo cálculo mostra fórmula, entradas, resultado e interpretação. |
+| Maya Albuquerque · Operações | `agentes/maya` | 4412 | Mapa da Operação, diagnóstico (fato, hipótese, recomendação), prioridades por impacto, urgência, esforço e dependência, plano com responsável, prazo, critério e métrica, SOPs, rotinas, revisão planejado x realizado e resumo executivo. |
 | Frederico · Comercial & CRM | `agentes/frederico` | 4411 | CRM padrão, pipeline, follow-ups com data e motivo, qualificação, propostas e análise do funil. Não envia nada: entrega textos para copiar. |
 
 O Frederico também lê o **HubSpot** (contatos, empresas e negócios) e pesquisa
@@ -59,7 +60,7 @@ o que for útil é importado como lead no CRM do Frederico.
 
 Os números de cada agente ficam em `agentes/<nome>/data/` e não vão para o
 git. Pela linha de comando: `node agentes/rosangela/relatorio.js` e
-`node agentes/frederico/relatorio.js`.
+`node agentes/frederico/relatorio.js` e `node agentes/maya/relatorio.js`.
 
 ## Começar
 

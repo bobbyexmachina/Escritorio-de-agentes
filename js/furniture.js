@@ -75,6 +75,7 @@ const FURN = (() => {
   workSlots.push({ id: 'DIR-1', room: 'diretoria', label: 'Mesa do sócio',
                    x: seatA.x, y: seatA.y, facing: 's', obj: mesaA, vip: true });
 
+  estacao('diretoria', 'OPS', 8.6, 5.4, 'fun');                       // operações, ao lado do sócio
   add({ t: 'rug', x: 1.8, y: 8.4, w: 5.8, d: 3.6, c: '#4a3628' });
   solto({ t: 'sofa', x: 2.2, y: 8.8, w: 4.6, d: 1.4, dir: 'n', c: '#6d6964' });
   solto({ t: 'lowTable', x: 3.5, y: 10.7, w: 2, d: 1 });
@@ -214,7 +215,8 @@ const FURN = (() => {
   descanso('PEB1', 'pebolim', 61.1, 41.0, 'w', 'no pebolim', peb);
 
   solto({ t: 'tvPe', x: 47.6, y: 41.5, w: 3.6, d: .45 });
-  [[47.6, 42.8, 18], [49.6, 43.0, 200], [51.6, 42.8, 330]].forEach((b, i) => {
+  // pufes na mesma linha: a fileira de trás fica livre para chegar neles
+  [[47.6, 42.8, 18], [49.6, 42.8, 200], [51.6, 42.8, 330]].forEach((b, i) => {
     const o = solto({ t: 'beanbag', x: b[0], y: b[1], w: 1.2, d: 1.2, hue: b[2] });
     descanso('BAG' + i, 'puff', b[0] + .6, b[1] + .55, 'n', 'jogando videogame', o, true);
   });
@@ -222,17 +224,19 @@ const FURN = (() => {
   const bar = solto({ t: 'bar', x: 58.4, y: 43.3, w: 3.8, d: 1.2 });
   descanso('BAR0', 'bar', 59.4, 42.4, 's', 'tomando um café', bar);
   descanso('BAR1', 'bar', 61.2, 42.4, 's', 'tomando um café', bar);
-  solto({ t: 'plant', x: 53.4, y: 43.5, k: 2 });
 
-  /* ---------- RECEPÇÃO & CORREDORES ---------- */
+  /* ---------- RECEPÇÃO & CORREDORES ----------
+     Corredores de 3 tiles: decoração só na fileira de cima (y 14 / 30) e
+     na de baixo (y 16 / 32). A do meio (y 15 / 31) fica sempre livre —
+     é por ela que todo mundo chega do elevador.                        */
   add({ t: 'elevator', x: 62, y: 14.4, w: 1, d: 2.2 });
-  solto({ t: 'reception', x: 57.6, y: 14.15, w: 3, d: 1 });
-  solto({ t: 'cameraCine', x: 55.3, y: 14.15 });
-  solto({ t: 'ovelha', x: 46.2, y: 14.2, w: 1.6, d: 1.2 });
+  solto({ t: 'reception', x: 57.6, y: 14.0, w: 3, d: .95 });
+  solto({ t: 'cameraCine', x: 55.3, y: 14.0, w: 1, d: .95 });
+  solto({ t: 'ovelha', x: 46.2, y: 14.0, w: 1.6, d: .95 });
   [11, 25.6, 39.6].forEach(x => solto({ t: 'banco', x, y: 14.15, w: 2.6, d: .7 }));
   [9, 24, 45].forEach(x => solto({ t: 'banco', x, y: 30.15, w: 2.6, d: .7 }));
-  [2, 17.5, 31.5, 44].forEach(x => solto({ t: 'plant', x, y: 14.1, k: 2 }));
-  [2, 15, 38, 50, 61.6].forEach(x => solto({ t: 'plant', x, y: 30.1, k: 2 }));
+  [2, 17.5, 31.5, 44].forEach(x => solto({ t: 'plant', x, y: 14.0, w: 1, d: .95, k: 2 }));
+  [2, 15, 38, 50, 61.6].forEach(x => solto({ t: 'plant', x, y: 30.0, w: 1, d: .95, k: 2 }));
 
   /* ---------- verde: vaso grande em cada canto livre e floreiras nos corredores ---------- */
   const pertoDePorta = (x, y) => WORLD.DOORS.some(d => Math.abs(d.x - x) <= 2 && Math.abs(d.y - y) <= 2);

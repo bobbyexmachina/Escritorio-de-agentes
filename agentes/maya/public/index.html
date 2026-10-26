@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maya Albuquerque · Operações</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topo">
+  <div class="quem">
+    <div class="foto" aria-hidden="true">MA</div>
+    <div><strong>Maya Albuquerque</strong><span>Diretora de Operações</span></div>
+  </div>
+  <nav class="abas" id="abas">
+    <button data-aba="mapa" class="on">Mapa da Operação</button>
+    <button data-aba="diagnosticar">Diagnosticar</button>
+    <button data-aba="planejar">Planejar</button>
+    <button data-aba="executar">Executar</button>
+    <button data-aba="revisar">Revisar</button>
+    <button data-aba="entrega">Entrega</button>
+  </nav>
+</header>
+
+<p class="aviso">Cada informação diz se é <b>FATO</b> fornecido, <b>HIPÓTESE</b> ou <b>RECOMENDAÇÃO</b>. Nada de número, prazo ou resultado inventado: o que falta aparece como “não informado”. A menor estrutura que funcione.</p>
+
+<main>
+  <!-- MAPA DA OPERAÇÃO -->
+  <section class="aba on" id="aba-mapa">
+    <div id="boasvindas"></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="bloco">
+      <h2>Mapa da Operação</h2>
+      <form id="f-emp" class="formgrid"></form>
+      <div class="acoes"><button class="btn prim" id="salvar-emp">Salvar</button></div>
+    </div>
+  </section>
+
+  <!-- DIAGNOSTICAR -->
+  <section class="aba" id="aba-diagnosticar">
+    <div class="bloco">
+      <h2>Diagnóstico</h2>
+      <p class="dim">Objetivo, situação atual, gargalos, dependências e riscos. Marque o que é fato que você forneceu, o que é hipótese e o que é recomendação.</p>
+      <div class="formgrid duas">
+        <label><span>Objetivo</span><textarea id="d-objetivo" rows="3"></textarea></label>
+        <label><span>Situação atual</span><textarea id="d-situacao" rows="3"></textarea></label>
+      </div>
+      <form id="f-item" class="linha item4">
+        <select name="tipo"><option value="gargalo">Gargalo</option><option value="dependencia">Dependência</option><option value="risco">Risco</option><option value="situacao">Situação</option></select>
+        <input name="texto" placeholder="Descreva em uma frase" required>
+        <select name="natureza"><option value="fato">FATO fornecido</option><option value="hipotese">HIPÓTESE</option><option value="recomendacao">RECOMENDAÇÃO</option></select>
+        <button class="btn">Adicionar</button>
+      </form>
+      <div class="grade4" id="d-itens"></div>
+      <div class="acoes"><button class="btn prim" id="salvar-diag">Salvar diagnóstico</button></div>
+    </div>
+  </section>
+
+  <!-- PLANEJAR -->
+  <section class="aba" id="aba-planejar">
+    <div class="bloco">
+      <h2>Nova ação</h2>
+      <form id="f-acao" class="formacao">
+        <label class="largo"><span>Ação</span><input name="titulo" required placeholder="verbo + resultado (ex.: padronizar o briefing de clientes)"></label>
+        <label><span>Impacto</span><select name="impacto"></select></label>
+        <label><span>Urgência</span><select name="urgencia"></select></label>
+        <label><span>Esforço</span><select name="esforco"></select></label>
+        <label><span>Depende de</span><select name="dependeDe" multiple size="3"></select></label>
+        <label><span>Responsável sugerido</span><input name="responsavel"></label>
+        <label><span>Prazo</span><input name="prazo" type="date"></label>
+        <label class="largo"><span>Critério de conclusão</span><input name="criterio" placeholder="como saber que acabou"></label>
+        <label class="largo"><span>Métrica</span><input name="metrica" placeholder="o que vai mudar e como medir"></label>
+        <div class="acoes largo"><button class="btn prim">Adicionar ação</button></div>
+      </form>
+    </div>
+    <div class="bloco">
+      <div class="cab"><h2>Prioridades</h2><span class="dim" id="formula"></span></div>
+      <div class="matriz" id="matriz"></div>
+    </div>
+    <div class="bloco"><h2>Plano de ação</h2><div class="tabela" id="t-acoes"></div></div>
+  </section>
+
+  <!-- EXECUTAR -->
+  <section class="aba" id="aba-executar">
+    <div class="grade2">
+      <div class="bloco">
+        <h2>SOPs e checklists</h2>
+        <p class="dim">Só para o que se repete. Se não se repete, é uma ação no plano.</p>
+        <form id="f-sop" class="formacao">
+          <label class="largo"><span>Processo</span><input name="titulo" required placeholder="ex.: abertura de um novo projeto"></label>
+          <label class="largo"><span>Objetivo</span><input name="objetivo"></label>
+          <label><span>Quando acontece</span><input name="gatilho" placeholder="ex.: proposta aprovada"></label>
+          <label><span>Responsável</span><input name="responsavel"></label>
+          <label class="largo"><span>Passos (um por linha)</span><textarea name="passos" rows="5"></textarea></label>
+          <label class="largo"><span>Pronto quando</span><input name="pronto"></label>
+          <div class="acoes largo"><button class="btn prim">Criar SOP</button></div>
+        </form>
+        <div id="sops"></div>
+      </div>
+      <div class="bloco">
+        <h2>Rotinas</h2>
+        <p class="dim">Cadências diária, semanal e mensal — só as que ajudam a decidir ou destravar.</p>
+        <form id="f-rot" class="formacao">
+          <label><span>Cadência</span><select name="cadencia"><option value="diaria">Diária</option><option value="semanal" selected>Semanal</option><option value="mensal">Mensal</option></select></label>
+          <label><span>Quando</span><input name="quando" placeholder="ex.: segunda, 9h"></label>
+          <label class="largo"><span>Rotina</span><input name="titulo" required placeholder="ex.: reunião de pipeline de produção"></label>
+          <label><span>Responsável</span><input name="responsavel"></label>
+          <label><span>Duração</span><input name="duracao" placeholder="ex.: 20 min"></label>
+          <label class="largo"><span>Pauta</span><textarea name="pauta" rows="3"></textarea></label>
+          <div class="acoes largo"><button class="btn prim">Adicionar rotina</button></div>
+        </form>
+        <div id="rotinas"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVISAR -->
+  <section class="aba" id="aba-revisar">
+    <div class="kpis" id="kpis-rev"></div>
+    <div class="grade2">
+      <div class="bloco"><h2>Planejado x realizado</h2><div id="revisao"></div></div>
+      <div class="bloco"><h2>Correções sugeridas</h2><div id="correcoes"></div></div>
+    </div>
+    <div class="grade2">
+      <div class="bloco">
+        <h2>Decisões</h2>
+        <form id="f-dec" class="linha item4">
+          <input name="data" type="date">
+          <input name="texto" placeholder="O que foi decidido" required>
+          <select name="natureza"><option value="fato">FATO</option><option value="hipotese">HIPÓTESE</option><option value="recomendacao">RECOMENDAÇÃO</option></select>
+          <button class="btn">Registrar</button>
+        </form>
+        <div id="decisoes"></div>
+      </div>
+      <div class="bloco">
+        <div class="cab"><h2>Resumo executivo</h2><button class="btn" data-copiar="resumo-md">Copiar</button></div>
+        <article class="md" id="resumo"></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENTREGA -->
+  <section class="aba" id="aba-entrega">
+    <div class="bloco">
+      <div class="cab">
+        <h2>Entrega no formato padrão</h2>
+        <div class="acoes"><button class="btn" data-copiar="entrega-md">Copiar</button><a class="btn" id="baixar">Baixar .md</a></div>
+      </div>
+      <article class="md" id="entrega"></article>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="confirma" hidden>
+  <div class="modal-card"><p id="c-texto"></p>
+    <div class="acoes"><button class="btn" id="c-nao">Cancelar</button><button class="btn prim" id="c-sim">Confirmar</button></div></div>
+</div>
+<div id="toast" class="toast"></div>
+<script src="app.js"></script>
+</body>
+</html>

@@ -419,7 +419,8 @@ const elFps = document.getElementById("fps");
 let fpsN = 0, fpsT = 0, msDesenho = 0;
 
 function frame(now) {
-  const dt = Math.min(0.05, (now - T0) / 1000);
+  // o primeiro carimbo do requestAnimationFrame pode vir antes de T0: nunca deixa o tempo andar para trás
+  const dt = Math.max(0, Math.min(0.05, (now - T0) / 1000));
   T0 = now; t += dt;
 
   cam.z += (cam.tz - cam.z) * Math.min(1, dt * 9);

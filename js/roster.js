@@ -70,6 +70,13 @@ const ROSTER = (() => {
       look: { skin: '#c9854f', hair: '#1a120d', style: 'cacheado', shirt: '#14b8a6', pants: '#1b2030', glasses: null, beard: null }
     },
     {
+      key: 'maya', name: 'Maya Albuquerque', role: 'Diretora de Operações', emoji: '🧭',
+      cat: 'detectado', system: 'Operação', sistema: 'maya', dept: 'diretoria',
+      desc: 'Transforma objetivos e informações soltas em operação: diagnóstico, prioridades, plano, SOPs, rotinas e revisão.',
+      why: 'Prioridade clara, responsável e prazo em cada ação, e a menor estrutura que funcione — sem burocracia.',
+      look: { skin: '#f0c29b', hair: '#140f0c', style: 'longo', shirt: '#0f172a', pants: '#111827', glasses: 'retangular', beard: null }
+    },
+    {
       key: 'roteiro', name: 'Juca', role: 'Roteiro & Criação', emoji: '📝', cat: 'sugerido', dept: 'funcionarios',
       desc: 'Transforma o briefing do cliente em conceito, roteiro e decupagem técnica.',
       why: 'Todo vídeo começa no papel. Roteiro rápido e bem estruturado acelera a aprovação.',
